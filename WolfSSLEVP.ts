@@ -1,5 +1,5 @@
 const wolfcrypt = require( './build/Release/wolfcrypt' );
-const stream = require( 'node:stream' );
+const stream = require( 'stream' );
 
 class WolfSSLEVP {
   protected evp: Buffer

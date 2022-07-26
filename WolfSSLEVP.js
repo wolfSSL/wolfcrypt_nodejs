@@ -17,7 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 exports.__esModule = true;
 exports.WolfSSLDecryptionStream = exports.WolfSSLEncryptionStream = exports.WolfSSLDecryptor = exports.WolfSSLEncryptor = void 0;
 var wolfcrypt = require('./build/Release/wolfcrypt');
-var stream = require('node:stream');
+var stream = require('stream');
 var WolfSSLEVP = /** @class */ (function () {
     function WolfSSLEVP() {
         this.evp = Buffer.alloc(wolfcrypt.sizeof_EVP_CIPHER_CTX());
