@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <cstring>
 #include "wolfssl/options.h"
+#include "wolfssl/ssl.h"
 #include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/aes.h>
 #include <wolfssl/openssl/evp.h>
@@ -30,9 +31,9 @@ Napi::Number bind_EVP_CipherInit(const Napi::CallbackInfo& info)
   std::string type = info[1].As<Napi::String>().Utf8Value();
   uint8_t* key = info[2].As<Napi::Uint8Array>().Data();
   uint8_t* iv = info[3].As<Napi::Uint8Array>().Data();
+  int enc = info[4].As<Napi::Number>().Int32Value();
 
-  ret = EVP_CipherInit( evp, type.c_str(), key, iv, 0 );
-  //ret = EVP_CipherInit( evp, "AES-256-CBC", key, iv, 0 );
+  ret = EVP_CipherInit( evp, type.c_str(), key, iv, enc );
 
   return Napi::Number::New( env, ret );
 }
