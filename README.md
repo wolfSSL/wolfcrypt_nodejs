@@ -27,3 +27,13 @@ npm i
 npm run build
 npm run tsrun
 ```
+
+## Example Output
+
+```
+$ npm run tsrun
+> wolfcrypt_binding@1.0.0 tsrun /home/davidgarske/GitHub/wolfcrypt_nodejs
+> npx tsc main.ts && node main.js
+
+PASS
+```

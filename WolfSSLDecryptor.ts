@@ -59,6 +59,8 @@ export class WolfSSLDecryptor {
    * process.
    */
   public finalize(): Buffer {
+    this.totalInputLength += this.totalInputLength % 16;
+
     let outBuffer = Buffer.alloc( this.totalInputLength )
 
     let ret = wolfcrypt.EVP_CipherFinal( this.evp, outBuffer )

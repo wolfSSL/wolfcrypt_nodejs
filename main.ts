@@ -3,7 +3,7 @@ import { WolfSSLDecryptor } from './WolfSSLDecryptor'
 const key = Buffer.from('12345678901234567890123456789012')
 const iv = Buffer.from('1234567890123456')
 const decrypt = new WolfSSLDecryptor('AES-256-CBC', key, iv)
-const expected = 'test'
+const expected = 'test\0\0\0\0\0\0\0\0\0\0\0\0'
 
 const actual = Buffer.concat([
   decrypt.update(Buffer.from('24d31b1e41fc8c40', 'hex')),
