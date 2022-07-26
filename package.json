@@ -6,13 +6,16 @@
   "gypfile": true,
   "scripts": {
     "run": "node app.js",
+    "tsrun": "npx tsc main.ts && node main.js",
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean"
   },
   "author": "John Bland",
   "license": "GPL-2.0",
   "devDependencies": {
-    "node-gyp": "^9.1.0"
+    "@types/node": "^18.0.6",
+    "node-gyp": "^9.1.0",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "node-addon-api": "^5.0.0"

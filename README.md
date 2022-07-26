@@ -25,5 +25,5 @@ Use npm to install and build:
 ```
 npm i
 npm run build
-node app.js
+npm run tsrun
 ```
