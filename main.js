@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var WolfSSLEVP_1 = require("./WolfSSLEVP");
+var WolfSSLHmac_1 = require("./WolfSSLHmac");
 var key = Buffer.from('12345678901234567890123456789012');
 var iv = Buffer.from('1234567890123456');
 var decrypt = new WolfSSLEVP_1.WolfSSLDecryptor('AES-256-CBC', key, iv);
@@ -9,6 +10,7 @@ var expected = 'test';
 var expectedCiphertext = '24d31b1e41fc8c40e521531d67c72c20';
 // 17 bytes to test padding
 var expectedLonger = '12345678901234567';
+var expectedLongerDigest = 'db6ff3fef0c61ef0d43d7020f6de2bb570a2dbf78921bb185242971b9c8e8d85afb6cbfc31a2a1de3b538da6b784e7424e84e3d8973bcf57798b3e3b67d6b45e';
 var ciphertext = Buffer.concat([
     encrypt.update(Buffer.from(expected)),
     encrypt.finalize()
@@ -88,3 +90,30 @@ for (i = 0; i < expected.length; i++) {
     encryptStream.write(expected[i]);
 }
 encryptStream.end();
+var hmac = new WolfSSLHmac_1.WolfSSLHmac('SHA3_512', key);
+hmac.update(Buffer.from(expectedLonger));
+var actualDigest = hmac.finalize();
+if (actualDigest.toString('hex') == expectedLongerDigest) {
+    console.log('PASS digest match');
+}
+else {
+    console.log('Fail digest mismatch');
+}
+var hmacParts = [];
+var hmacStream = new WolfSSLHmac_1.WolfSSLHmacStream('SHA3_512', key);
+hmacStream.on('data', function (chunk) {
+    hmacParts.push(chunk);
+});
+hmacStream.on('end', function () {
+    var streamedDigest = Buffer.concat(hmacParts);
+    if (streamedDigest.toString('hex') == expectedLongerDigest) {
+        console.log('PASS streamed digest match');
+    }
+    else {
+        console.log('Fail streamed digest does not match what we expected');
+    }
+});
+for (i = 0; i < expectedLonger.length; i++) {
+    hmacStream.write(expectedLonger[i]);
+}
+hmacStream.end();

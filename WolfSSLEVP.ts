@@ -1,11 +1,14 @@
 const wolfcrypt = require( './build/Release/wolfcrypt' );
 const stream = require( 'stream' );
 
-class WolfSSLEVP {
-  protected evp: number
-  protected totalInputLength: number
+class WolfSSLEVP
+{
+  // actually holds a pointer but nodejs has no pointer type
+  protected evp: number = null
+  protected totalInputLength: number = 0
 
-  public constructor() {
+  public constructor()
+  {
     this.evp = wolfcrypt.EVP_CIPHER_CTX_new()
     this.totalInputLength = 0
   }
@@ -21,7 +24,13 @@ class WolfSSLEVP {
    *
    * @remarks This function should be called multiple times.
    */
-  public update(data: Buffer): Buffer {
+  public update(data: Buffer): Buffer
+  {
+    if ( this.evp == null )
+    {
+      throw 'Cipher is not allocated'
+    }
+
     this.totalInputLength += data.length
 
     let outBuffer = Buffer.alloc( this.totalInputLength )
@@ -53,7 +62,13 @@ class WolfSSLEVP {
    * @remarks This function should be called once to finalize the decryption
    * process.
    */
-  public finalize(): Buffer {
+  public finalize(): Buffer
+  {
+    if ( this.evp == null )
+    {
+      throw 'Cipher is not allocated'
+    }
+
     if ( this.totalInputLength % 16 != 0 )
     {
       this.totalInputLength += ( 16 - this.totalInputLength % 16 )
@@ -63,7 +78,9 @@ class WolfSSLEVP {
     this.totalInputLength = 0;
 
     let ret = wolfcrypt.EVP_CipherFinal( this.evp, outBuffer )
+
     wolfcrypt.EVP_CIPHER_CTX_free( this.evp )
+    this.evp = null
 
     if ( ret < 0 )
     {
@@ -78,6 +95,19 @@ class WolfSSLEVP {
     return Buffer.alloc( 0 )
   }
 
+  public free()
+  {
+    if ( this.evp != null )
+    {
+      wolfcrypt.EVP_CIPHER_CTX_free( this.evp )
+      this.evp = null
+    }
+    else
+    {
+      throw 'Cipher is not allocated'
+    }
+  }
+
   /**
    * Enables the FIPS mode.
    */
@@ -90,7 +120,8 @@ class WolfSSLEVP {
   */
 }
 
-export class WolfSSLEncryptor extends WolfSSLEVP {
+export class WolfSSLEncryptor extends WolfSSLEVP
+{
   /**
    * Initializes a new instance of the WolfSSLEncryptor class.
    *
@@ -101,7 +132,8 @@ export class WolfSSLEncryptor extends WolfSSLEVP {
    * @throws {Error} If cipher is not available or unknown.
    * @throws {Error} If the creation of the Decryption object failed.
    */
-  public constructor(cipher: string, key: Buffer, iv: Buffer) {
+  public constructor(cipher: string, key: Buffer, iv: Buffer)
+  {
     super()
     wolfcrypt.EVP_CipherInit( this.evp, cipher, key, iv, 1 )
   }
@@ -118,13 +150,15 @@ export class WolfSSLDecryptor extends WolfSSLEVP {
    * @throws {Error} If cipher is not available or unknown.
    * @throws {Error} If the creation of the Decryption object failed.
    */
-  public constructor(cipher: string, key: Buffer, iv: Buffer) {
+  public constructor(cipher: string, key: Buffer, iv: Buffer)
+  {
     super()
     wolfcrypt.EVP_CipherInit( this.evp, cipher, key, iv, 0 )
   }
 }
 
-export class WolfSSLEncryptionStream extends stream.Transform {
+export class WolfSSLEncryptionStream extends stream.Transform
+{
   private encryptor: WolfSSLEncryptor
   /**
    * Initializes a new instance of the WolfSSLEncryptionStream class.
@@ -136,7 +170,8 @@ export class WolfSSLEncryptionStream extends stream.Transform {
    * @throws {Error} If cipher is not available or unknown.
    * @throws {Error} If the creation of the Decryption object failed.
    */
-  public constructor(cipher: string, key: Buffer, iv: Buffer) {
+  public constructor(cipher: string, key: Buffer, iv: Buffer)
+  {
     super()
     this.encryptor = new WolfSSLEncryptor( cipher, key, iv )
   }
@@ -180,7 +215,8 @@ export class WolfSSLDecryptionStream extends stream.Transform {
    * @throws {Error} If cipher is not available or unknown.
    * @throws {Error} If the creation of the Decryption object failed.
    */
-  public constructor(cipher: string, key: Buffer, iv: Buffer) {
+  public constructor(cipher: string, key: Buffer, iv: Buffer)
+  {
     super()
     this.encryptor = new WolfSSLDecryptor( cipher, key, iv )
   }

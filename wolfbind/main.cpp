@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <cstring>
 #include "./h/evp.h"
+#include "./h/hmac.h"
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/aes.h>
@@ -83,6 +84,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "EVP_CipherUpdate"), Napi::Function::New(env, bind_EVP_CipherUpdate));
   exports.Set(Napi::String::New(env, "EVP_CipherFinal"), Napi::Function::New(env, bind_EVP_CipherFinal));
   exports.Set(Napi::String::New(env, "EVP_CIPHER_CTX_free"), Napi::Function::New(env, bind_EVP_CIPHER_CTX_free));
+
+  exports.Set(Napi::String::New(env, "sizeof_Hmac"), Napi::Function::New(env, sizeof_Hmac));
+  exports.Set(Napi::String::New(env, "typeof_Hmac"), Napi::Function::New(env, typeof_Hmac));
+  exports.Set(Napi::String::New(env, "Hmac_digest_length"), Napi::Function::New(env, Hmac_digest_length));
+  exports.Set(Napi::String::New(env, "wc_HmacSetKey"), Napi::Function::New(env, bind_wc_HmacSetKey));
+  exports.Set(Napi::String::New(env, "wc_HmacUpdate"), Napi::Function::New(env, bind_wc_HmacUpdate));
+  exports.Set(Napi::String::New(env, "wc_HmacFinal"), Napi::Function::New(env, bind_wc_HmacFinal));
+  exports.Set(Napi::String::New(env, "wc_HmacFree"), Napi::Function::New(env, bind_wc_HmacFree));
 
   return exports;
 }

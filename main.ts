@@ -1,5 +1,9 @@
 import { WolfSSLEncryptor, WolfSSLDecryptor, WolfSSLEncryptionStream, WolfSSLDecryptionStream } from './WolfSSLEVP'
+import { WolfSSLHmac, WolfSSLHmacStream } from './WolfSSLHmac'
 
+//
+// EVP
+//
 const key = Buffer.from('12345678901234567890123456789012')
 const iv = Buffer.from('1234567890123456')
 let decrypt = new WolfSSLDecryptor('AES-256-CBC', key, iv)
@@ -8,6 +12,7 @@ const expected = 'test'
 const expectedCiphertext = '24d31b1e41fc8c40e521531d67c72c20'
 // 17 bytes to test padding
 const expectedLonger = '12345678901234567'
+const expectedLongerDigest = 'db6ff3fef0c61ef0d43d7020f6de2bb570a2dbf78921bb185242971b9c8e8d85afb6cbfc31a2a1de3b538da6b784e7424e84e3d8973bcf57798b3e3b67d6b45e'
 
 const ciphertext = Buffer.concat([
   encrypt.update( Buffer.from( expected ) ),
@@ -74,6 +79,9 @@ else
   console.log( 'FAIL longer plaintext does not match what we expected', expectedLonger, expectedLonger.length, actualLonger, actualLonger.length )
 }
 
+//
+// EVP STREAM
+//
 parts = []
 const encryptStream = new WolfSSLEncryptionStream( 'AES-256-CBC', key, iv )
 
@@ -127,3 +135,46 @@ for ( i = 0; i < expected.length; i++ )
 }
 
 encryptStream.end()
+
+//
+// HMAC
+//
+let hmac = new WolfSSLHmac( 'SHA3_512', key )
+hmac.update( Buffer.from( expectedLonger ) )
+let actualDigest = hmac.finalize()
+
+if ( actualDigest.toString( 'hex' ) == expectedLongerDigest )
+{
+  console.log( 'PASS digest match' )
+}
+else
+{
+  console.log( 'Fail digest mismatch' )
+}
+
+let hmacParts = []
+let hmacStream = new WolfSSLHmacStream( 'SHA3_512', key )
+
+hmacStream.on( 'data', function( chunk ) {
+  hmacParts.push( chunk )
+} )
+
+hmacStream.on( 'end', function() {
+  let streamedDigest = Buffer.concat( hmacParts )
+
+  if ( streamedDigest.toString( 'hex' ) == expectedLongerDigest )
+  {
+    console.log( 'PASS streamed digest match' )
+  }
+  else
+  {
+    console.log( 'Fail streamed digest does not match what we expected' )
+  }
+} )
+
+for ( i = 0; i < expectedLonger.length; i++ )
+{
+  hmacStream.write( expectedLonger[i] )
+}
+
+hmacStream.end()

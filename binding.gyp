@@ -5,7 +5,8 @@
         "cflags_cc!": [ "-fno-exceptions" ],
         "sources": [
             "wolfbind/main.cpp",
-            "wolfbind/evp.cpp"
+            "wolfbind/evp.cpp",
+            "wolfbind/hmac.cpp"
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"
