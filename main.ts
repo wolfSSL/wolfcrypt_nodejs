@@ -2,8 +2,8 @@ import { WolfSSLEncryptor, WolfSSLDecryptor, WolfSSLEncryptionStream, WolfSSLDec
 
 const key = Buffer.from('12345678901234567890123456789012')
 const iv = Buffer.from('1234567890123456')
-const decrypt = new WolfSSLDecryptor('AES-256-CBC', key, iv)
-const encrypt = new WolfSSLEncryptor('AES-256-CBC', key, iv)
+let decrypt = new WolfSSLDecryptor('AES-256-CBC', key, iv)
+let encrypt = new WolfSSLEncryptor('AES-256-CBC', key, iv)
 const expected = 'test'
 const expectedCiphertext = '24d31b1e41fc8c40e521531d67c72c20'
 // 17 bytes to test padding
@@ -36,6 +36,10 @@ else
 {
   console.log( 'FAIL plaintext does not match what we expected', expected, expected.length, actual, actual.length )
 }
+
+// finalize frees the evp context, need to make it again
+decrypt = new WolfSSLDecryptor('AES-256-CBC', key, iv)
+encrypt = new WolfSSLEncryptor('AES-256-CBC', key, iv)
 
 let parts = []
 let i;

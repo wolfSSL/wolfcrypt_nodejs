@@ -29,6 +29,9 @@ if (actual == expected) {
 else {
     console.log('FAIL plaintext does not match what we expected', expected, expected.length, actual, actual.length);
 }
+// finalize frees the evp context, need to make it again
+decrypt = new WolfSSLEVP_1.WolfSSLDecryptor('AES-256-CBC', key, iv);
+encrypt = new WolfSSLEVP_1.WolfSSLEncryptor('AES-256-CBC', key, iv);
 var parts = [];
 var i;
 // lets put the api through its paces

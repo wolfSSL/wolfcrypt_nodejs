@@ -4,7 +4,8 @@
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions" ],
         "sources": [
-            "wolfbind/main.cpp"
+            "wolfbind/main.cpp",
+            "wolfbind/evp.cpp"
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"

@@ -2,11 +2,11 @@ const wolfcrypt = require( './build/Release/wolfcrypt' );
 const stream = require( 'stream' );
 
 class WolfSSLEVP {
-  protected evp: Buffer
+  protected evp: number
   protected totalInputLength: number
 
   public constructor() {
-    this.evp = Buffer.alloc( wolfcrypt.sizeof_EVP_CIPHER_CTX() )
+    this.evp = wolfcrypt.EVP_CIPHER_CTX_new()
     this.totalInputLength = 0
   }
 
@@ -63,6 +63,7 @@ class WolfSSLEVP {
     this.totalInputLength = 0;
 
     let ret = wolfcrypt.EVP_CipherFinal( this.evp, outBuffer )
+    wolfcrypt.EVP_CIPHER_CTX_free( this.evp )
 
     if ( ret < 0 )
     {

@@ -20,7 +20,7 @@ var wolfcrypt = require('./build/Release/wolfcrypt');
 var stream = require('stream');
 var WolfSSLEVP = /** @class */ (function () {
     function WolfSSLEVP() {
-        this.evp = Buffer.alloc(wolfcrypt.sizeof_EVP_CIPHER_CTX());
+        this.evp = wolfcrypt.EVP_CIPHER_CTX_new();
         this.totalInputLength = 0;
     }
     /**
@@ -64,6 +64,7 @@ var WolfSSLEVP = /** @class */ (function () {
         var outBuffer = Buffer.alloc(this.totalInputLength);
         this.totalInputLength = 0;
         var ret = wolfcrypt.EVP_CipherFinal(this.evp, outBuffer);
+        wolfcrypt.EVP_CIPHER_CTX_free(this.evp);
         if (ret < 0) {
             throw 'Failed to finalize cipher';
         }
