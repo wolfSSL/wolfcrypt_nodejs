@@ -20,7 +20,10 @@ var wolfcrypt = require('./build/Release/wolfcrypt');
 var stream = require('stream');
 var WolfSSLEVP = /** @class */ (function () {
     function WolfSSLEVP() {
-        this.evp = Buffer.alloc(wolfcrypt.sizeof_EVP_CIPHER_CTX());
+        // actually holds a pointer but nodejs has no pointer type
+        this.evp = null;
+        this.totalInputLength = 0;
+        this.evp = wolfcrypt.EVP_CIPHER_CTX_new();
         this.totalInputLength = 0;
     }
     /**
@@ -35,6 +38,9 @@ var WolfSSLEVP = /** @class */ (function () {
      * @remarks This function should be called multiple times.
      */
     WolfSSLEVP.prototype.update = function (data) {
+        if (this.evp == null) {
+            throw 'Cipher is not allocated';
+        }
         this.totalInputLength += data.length;
         var outBuffer = Buffer.alloc(this.totalInputLength);
         var ret = wolfcrypt.EVP_CipherUpdate(this.evp, outBuffer, data, data.length);
@@ -58,12 +64,17 @@ var WolfSSLEVP = /** @class */ (function () {
      * process.
      */
     WolfSSLEVP.prototype.finalize = function () {
+        if (this.evp == null) {
+            throw 'Cipher is not allocated';
+        }
         if (this.totalInputLength % 16 != 0) {
             this.totalInputLength += (16 - this.totalInputLength % 16);
         }
         var outBuffer = Buffer.alloc(this.totalInputLength);
         this.totalInputLength = 0;
         var ret = wolfcrypt.EVP_CipherFinal(this.evp, outBuffer);
+        wolfcrypt.EVP_CIPHER_CTX_free(this.evp);
+        this.evp = null;
         if (ret < 0) {
             throw 'Failed to finalize cipher';
         }
@@ -71,6 +82,15 @@ var WolfSSLEVP = /** @class */ (function () {
             return outBuffer.subarray(0, ret);
         }
         return Buffer.alloc(0);
+    };
+    WolfSSLEVP.prototype.free = function () {
+        if (this.evp != null) {
+            wolfcrypt.EVP_CIPHER_CTX_free(this.evp);
+            this.evp = null;
+        }
+        else {
+            throw 'Cipher is not allocated';
+        }
     };
     return WolfSSLEVP;
 }());
