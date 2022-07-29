@@ -4,6 +4,7 @@
 #include "./h/evp.h"
 #include "./h/hmac.h"
 #include "./h/rsa.h"
+#include "./h/sha.h"
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/aes.h>
@@ -104,6 +105,43 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_RsaPublicEncrypt"), Napi::Function::New(env, bind_wc_RsaPublicEncrypt));
   exports.Set(Napi::String::New(env, "wc_RsaPrivateDecrypt"), Napi::Function::New(env, bind_wc_RsaPrivateDecrypt));
   exports.Set(Napi::String::New(env, "wc_FreeRsaKey"), Napi::Function::New(env, bind_wc_FreeRsaKey));
+
+  exports.Set(Napi::String::New(env, "Sha_digest_length"), Napi::Function::New(env, Sha_digest_length));
+
+  exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA_CTX));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA_Init"), Napi::Function::New(env, bind_wolfSSL_SHA_Init));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA_Update"), Napi::Function::New(env, bind_wolfSSL_SHA_Update));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA_Final"), Napi::Function::New(env, bind_wolfSSL_SHA_Final));
+
+  exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA224_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA224_CTX));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA224_Init"), Napi::Function::New(env, bind_wolfSSL_SHA224_Init));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA224_Update"), Napi::Function::New(env, bind_wolfSSL_SHA224_Update));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA224_Final"), Napi::Function::New(env, bind_wolfSSL_SHA224_Final));
+
+  exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA256_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA256_CTX));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA256_Init"), Napi::Function::New(env, bind_wolfSSL_SHA256_Init));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA256_Update"), Napi::Function::New(env, bind_wolfSSL_SHA256_Update));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA256_Final"), Napi::Function::New(env, bind_wolfSSL_SHA256_Final));
+
+  exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA384_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA384_CTX));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA384_Init"), Napi::Function::New(env, bind_wolfSSL_SHA384_Init));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA384_Update"), Napi::Function::New(env, bind_wolfSSL_SHA384_Update));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA384_Final"), Napi::Function::New(env, bind_wolfSSL_SHA384_Final));
+
+  exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA512_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA512_CTX));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_Init"), Napi::Function::New(env, bind_wolfSSL_SHA512_Init));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_Update"), Napi::Function::New(env, bind_wolfSSL_SHA512_Update));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_Final"), Napi::Function::New(env, bind_wolfSSL_SHA512_Final));
+
+  exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA512_224_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA512_224_CTX));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_224_Init"), Napi::Function::New(env, bind_wolfSSL_SHA512_224_Init));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_224_Update"), Napi::Function::New(env, bind_wolfSSL_SHA512_224_Update));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_224_Final"), Napi::Function::New(env, bind_wolfSSL_SHA512_224_Final));
+
+  exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA512_256_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA512_256_CTX));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Init"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Init));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Update"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Update));
+  exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Final"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Final));
 
   return exports;
 }
