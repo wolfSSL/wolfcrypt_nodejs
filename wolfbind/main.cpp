@@ -3,6 +3,7 @@
 #include <cstring>
 #include "./h/evp.h"
 #include "./h/hmac.h"
+#include "./h/rsa.h"
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/aes.h>
@@ -92,6 +93,17 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_HmacUpdate"), Napi::Function::New(env, bind_wc_HmacUpdate));
   exports.Set(Napi::String::New(env, "wc_HmacFinal"), Napi::Function::New(env, bind_wc_HmacFinal));
   exports.Set(Napi::String::New(env, "wc_HmacFree"), Napi::Function::New(env, bind_wc_HmacFree));
+
+  exports.Set(Napi::String::New(env, "sizeof_RsaKey"), Napi::Function::New(env, sizeof_RsaKey));
+  exports.Set(Napi::String::New(env, "wc_RsaEncryptSize"), Napi::Function::New(env, bind_wc_RsaEncryptSize));
+  exports.Set(Napi::String::New(env, "wc_InitRsaKey"), Napi::Function::New(env, bind_wc_InitRsaKey));
+  exports.Set(Napi::String::New(env, "wc_MakeRsaKey"), Napi::Function::New(env, bind_wc_MakeRsaKey));
+  exports.Set(Napi::String::New(env, "wc_RsaKeyToDer"), Napi::Function::New(env, bind_wc_RsaKeyToDer));
+  exports.Set(Napi::String::New(env, "wc_RsaPrivateKeyDecode"), Napi::Function::New(env, bind_wc_RsaPrivateKeyDecode));
+  exports.Set(Napi::String::New(env, "wc_RsaPublicKeyDecode"), Napi::Function::New(env, bind_wc_RsaPublicKeyDecode));
+  exports.Set(Napi::String::New(env, "wc_RsaPublicEncrypt"), Napi::Function::New(env, bind_wc_RsaPublicEncrypt));
+  exports.Set(Napi::String::New(env, "wc_RsaPrivateDecrypt"), Napi::Function::New(env, bind_wc_RsaPrivateDecrypt));
+  exports.Set(Napi::String::New(env, "wc_FreeRsaKey"), Napi::Function::New(env, bind_wc_FreeRsaKey));
 
   return exports;
 }

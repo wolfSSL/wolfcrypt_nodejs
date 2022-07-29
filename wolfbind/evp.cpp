@@ -1,12 +1,5 @@
 #include "./h/evp.h"
 
-Napi::Number sizeof_EVP_CIPHER_CTX(const Napi::CallbackInfo& info)
-{
-  Napi::Env env = info.Env();
-
-  return Napi::Number::New( env, sizeof( EVP_CIPHER_CTX ) );
-}
-
 Napi::Value bind_EVP_CIPHER_CTX_new(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();

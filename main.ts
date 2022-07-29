@@ -1,6 +1,8 @@
 import { WolfSSLEncryptor, WolfSSLDecryptor, WolfSSLEncryptionStream, WolfSSLDecryptionStream } from './WolfSSLEVP'
 import { WolfSSLHmac, WolfSSLHmacStream } from './WolfSSLHmac'
 
+const wolfcrypt = require( './build/Release/wolfcrypt' )
+
 //
 // EVP
 //
