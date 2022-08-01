@@ -192,62 +192,6 @@ class WolfSSLEcc
     return false
   }
 
-  ecc_encrypt( pubEcc, data )
-  {
-    if ( this.ecc == null || pubEcc.ecc == null )
-    {
-      throw 'Ecc not allocated'
-    }
-
-    if ( typeof data == 'string' )
-    {
-      data = Buffer.from( data )
-    }
-
-    let cipherText = Buffer.alloc( this.size * 2 + 1 + data.length + 32 )
-
-    console.log( cipherText.length )
-
-    let ret = wolfcrypt.wc_ecc_encrypt( this.ecc, pubEcc.ecc, data, data.length, cipherText, cipherText.length )
-
-    if ( ret <= 0 )
-    {
-      throw `Failed to wc_ecc_encrypt ${ ret }`
-    }
-
-    console.log( ret )
-
-    cipherText = cipherText.subarray( 0, ret )
-
-    return cipherText;
-  }
-
-  ecc_decrypt( pubEcc, cipherText )
-  {
-    if ( this.ecc == null || pubEcc.ecc == null )
-    {
-      throw 'Ecc not allocated'
-    }
-
-    if ( typeof cipherText == 'string' )
-    {
-      cipherText = Buffer.from( cipherText )
-    }
-
-    let data = Buffer.alloc( cipherText.length )
-
-    let ret = wolfcrypt.wc_ecc_decrypt( this.ecc, pubEcc.ecc, cipherText, cipherText.length, data, data.length )
-
-    if ( ret <= 0 )
-    {
-      throw `Failed to wc_ecc_decrypt ${ ret }`
-    }
-
-    data = data.subarray( 0, ret )
-
-    return cipherText;
-  }
-
   free()
   {
     if ( this.ecc == null )

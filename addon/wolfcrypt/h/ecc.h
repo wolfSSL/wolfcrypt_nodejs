@@ -34,6 +34,4 @@ Napi::Number bind_wc_ecc_shared_secret(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_sig_size(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_sign_hash(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_verify_hash(const Napi::CallbackInfo& info);
-Napi::Number bind_wc_ecc_encrypt(const Napi::CallbackInfo& info);
-Napi::Number bind_wc_ecc_decrypt(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_free(const Napi::CallbackInfo& info);

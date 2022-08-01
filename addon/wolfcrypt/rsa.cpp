@@ -141,9 +141,9 @@ Napi::Number bind_wc_FreeRsaKey(const Napi::CallbackInfo& info)
   Napi::Env env = info.Env();
   RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
 
-  if ( ecc->rng != NULL )
+  if ( rsa->rng != NULL )
   {
-    wc_rng_free( ecc->rng );
+    wc_rng_free( rsa->rng );
   }
 
   ret = wc_FreeRsaKey( rsa );

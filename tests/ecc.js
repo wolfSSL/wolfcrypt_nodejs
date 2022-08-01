@@ -130,31 +130,6 @@ const ecc_tests =
     ecc0.free()
     ecc1.free()
   },
-
-  encryptDecrypt: function()
-  {
-    let ecc0 = new WolfSSLEcc()
-    let ecc1 = new WolfSSLEcc()
-    let ecc2 = new WolfSSLEcc()
-
-    ecc0.make_key( 32 )
-    ecc1.make_key( 32 )
-
-    const cipherText = ecc0.ecc_encrypt( ecc1, message16 )
-    const plainText = ecc1.ecc_decrypt( ecc2, cipherText ).toString()
-
-    if ( plainText == message16 )
-    {
-      console.log( 'PASS ecc encryptDecrypt' )
-    }
-    else
-    {
-      console.log( 'FAIL ecc encryptDecrypt', plainText )
-    }
-
-    ecc0.free()
-    ecc1.free()
-  }
 }
 
 module.exports = ecc_tests

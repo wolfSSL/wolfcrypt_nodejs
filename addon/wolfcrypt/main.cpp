@@ -104,8 +104,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_ecc_sig_size"), Napi::Function::New(env, bind_wc_ecc_sig_size));
   exports.Set(Napi::String::New(env, "wc_ecc_sign_hash"), Napi::Function::New(env, bind_wc_ecc_sign_hash));
   exports.Set(Napi::String::New(env, "wc_ecc_verify_hash"), Napi::Function::New(env, bind_wc_ecc_verify_hash));
-  exports.Set(Napi::String::New(env, "wc_ecc_encrypt"), Napi::Function::New(env, bind_wc_ecc_encrypt));
-  exports.Set(Napi::String::New(env, "wc_ecc_decrypt"), Napi::Function::New(env, bind_wc_ecc_decrypt));
   exports.Set(Napi::String::New(env, "wc_ecc_free"), Napi::Function::New(env, bind_wc_ecc_free));
 
   return exports;

@@ -178,48 +178,6 @@ Napi::Number bind_wc_ecc_verify_hash(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, res );
 }
 
-Napi::Number bind_wc_ecc_encrypt(const Napi::CallbackInfo& info)
-{
-  int ret;
-  Napi::Env env = info.Env();
-  ecc_key* private_key = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
-  ecc_key* public_key = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
-  uint8_t* msg = info[2].As<Napi::Uint8Array>().Data();
-  unsigned int msg_len = info[3].As<Napi::Number>().Uint32Value();
-  uint8_t* out = info[4].As<Napi::Uint8Array>().Data();
-  unsigned int out_len = info[5].As<Napi::Number>().Uint32Value();
-
-  ret = wc_ecc_encrypt( private_key, public_key, msg, msg_len, out, &out_len, NULL );
-
-  if ( ret < 0 )
-  {
-    out_len = ret;
-  }
-
-  return Napi::Number::New( env, (int)out_len );
-}
-
-Napi::Number bind_wc_ecc_decrypt(const Napi::CallbackInfo& info)
-{
-  int ret;
-  Napi::Env env = info.Env();
-  ecc_key* private_key = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
-  ecc_key* public_key = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
-  uint8_t* msg = info[2].As<Napi::Uint8Array>().Data();
-  unsigned int msg_len = info[3].As<Napi::Number>().Uint32Value();
-  uint8_t* out = info[4].As<Napi::Uint8Array>().Data();
-  unsigned int out_len = info[5].As<Napi::Number>().Uint32Value();
-
-  ret = wc_ecc_decrypt( private_key, public_key, msg, msg_len, out, &out_len, NULL );
-
-  if ( ret < 0 )
-  {
-    out_len = ret;
-  }
-
-  return Napi::Number::New( env, (int)out_len );
-}
-
 Napi::Number bind_wc_ecc_free(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
