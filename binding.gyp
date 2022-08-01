@@ -8,7 +8,8 @@
             "addon/wolfcrypt/evp.cpp",
             "addon/wolfcrypt/hmac.cpp",
             "addon/wolfcrypt/rsa.cpp",
-            "addon/wolfcrypt/sha.cpp"
+            "addon/wolfcrypt/sha.cpp",
+            "addon/wolfcrypt/ecc.cpp"
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"

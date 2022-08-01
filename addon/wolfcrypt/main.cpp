@@ -1,3 +1,23 @@
+/* main.cpp
+ *
+ * Copyright (C) 2006-2022 wolfSSL Inc.
+ *
+ * This file is part of wolfSSL.
+ *
+ * wolfSSL is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * wolfSSL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
+ */
 #include <napi.h>
 #include <stdio.h>
 #include <cstring>
@@ -5,82 +25,12 @@
 #include "./h/hmac.h"
 #include "./h/rsa.h"
 #include "./h/sha.h"
-#include <wolfssl/options.h>
-#include <wolfssl/wolfcrypt/settings.h>
-#include <wolfssl/wolfcrypt/aes.h>
+#include "./h/ecc.h"
 
 using namespace Napi;
 
-typedef struct WrappedKey
-{
-  Aes aes[1];
-  uint8_t key[32];
-  uint8_t iv[16];
-} WrappedKey;
-
-Napi::Number MakeAes(const Napi::CallbackInfo& info)
-{
-  int ret = 0;
-  Napi::Env env = info.Env();
-  WrappedKey* key = (WrappedKey*)( info[0].As<Napi::Uint8Array>().Data() );
-
-  memcpy( key->key, ( info[1].As<Napi::Uint8Array>().Data() ), 32 );
-  memcpy( key->iv, ( info[2].As<Napi::Uint8Array>().Data() ), 16 );
-
-  //ret = wc_AesInit( key->aes, NULL, INVALID_DEVID );
-
-  return Napi::Number::New( env, ret );
-}
-
-Napi::Number Encrypt(const Napi::CallbackInfo& info)
-{
-  int ret;
-  Napi::Env env = info.Env();
-  WrappedKey* key = (WrappedKey*)(info[0].As<Napi::Uint8Array>().Data());
-  uint8_t* out = info[1].As<Napi::Uint8Array>().Data();
-  uint8_t* in = info[2].As<Napi::Uint8Array>().Data();
-  int length = info[3].As<Napi::Number>().Int32Value();
-
-  ret = wc_AesSetKey( key->aes, key->key, AES_256_KEY_SIZE, key->iv, AES_ENCRYPTION );
-
-  if ( ret == 0 )
-  {
-    ret = wc_AesCbcEncrypt( key->aes, out, in, length );
-
-    //wc_AesFree( key->aes );
-  }
-
-
-  return Napi::Number::New( env, ret );
-}
-
-Napi::Number Decrypt(const Napi::CallbackInfo& info)
-{
-  int ret;
-  Napi::Env env = info.Env();
-  WrappedKey* key = (WrappedKey*)(info[0].As<Napi::Uint8Array>().Data());
-  uint8_t* out = info[1].As<Napi::Uint8Array>().Data();
-  uint8_t* in = info[2].As<Napi::Uint8Array>().Data();
-  int length = info[3].As<Napi::Number>().Int32Value();
-
-  ret = wc_AesSetKey( key->aes, key->key, AES_256_KEY_SIZE, key->iv, AES_DECRYPTION );
-
-  if ( ret == 0 )
-  {
-    ret = wc_AesCbcDecrypt( key->aes, out, in, length );
-
-    //wc_AesFree( key->aes );
-  }
-
-  return Napi::Number::New( env, ret );
-}
-
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
-  exports.Set(Napi::String::New(env, "MakeAes"), Napi::Function::New(env, MakeAes));
-  exports.Set(Napi::String::New(env, "Encrypt"), Napi::Function::New(env, Encrypt));
-  exports.Set(Napi::String::New(env, "Decrypt"), Napi::Function::New(env, Decrypt));
-
   exports.Set(Napi::String::New(env, "EVP_CIPHER_CTX_new"), Napi::Function::New(env, bind_EVP_CIPHER_CTX_new));
   exports.Set(Napi::String::New(env, "EVP_CipherInit"), Napi::Function::New(env, bind_EVP_CipherInit));
   exports.Set(Napi::String::New(env, "EVP_CipherUpdate"), Napi::Function::New(env, bind_EVP_CipherUpdate));
@@ -142,6 +92,21 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Init"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Init));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Update"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Update));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Final"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Final));
+
+  exports.Set(Napi::String::New(env, "sizeof_ecc_key"), Napi::Function::New(env, sizeof_ecc_key));
+  exports.Set(Napi::String::New(env, "sizeof_ecc_point"), Napi::Function::New(env, sizeof_ecc_point));
+  exports.Set(Napi::String::New(env, "wc_ecc_init"), Napi::Function::New(env, bind_wc_ecc_init));
+  exports.Set(Napi::String::New(env, "wc_ecc_make_key"), Napi::Function::New(env, bind_wc_ecc_make_key));
+  exports.Set(Napi::String::New(env, "wc_ecc_export_x963"), Napi::Function::New(env, bind_wc_ecc_export_x963));
+  exports.Set(Napi::String::New(env, "wc_ecc_import_x963"), Napi::Function::New(env, bind_wc_ecc_import_x963));
+  exports.Set(Napi::String::New(env, "wc_ecc_set_curve"), Napi::Function::New(env, bind_wc_ecc_set_curve));
+  exports.Set(Napi::String::New(env, "wc_ecc_shared_secret"), Napi::Function::New(env, bind_wc_ecc_shared_secret));
+  exports.Set(Napi::String::New(env, "wc_ecc_sig_size"), Napi::Function::New(env, bind_wc_ecc_sig_size));
+  exports.Set(Napi::String::New(env, "wc_ecc_sign_hash"), Napi::Function::New(env, bind_wc_ecc_sign_hash));
+  exports.Set(Napi::String::New(env, "wc_ecc_verify_hash"), Napi::Function::New(env, bind_wc_ecc_verify_hash));
+  exports.Set(Napi::String::New(env, "wc_ecc_encrypt"), Napi::Function::New(env, bind_wc_ecc_encrypt));
+  exports.Set(Napi::String::New(env, "wc_ecc_decrypt"), Napi::Function::New(env, bind_wc_ecc_decrypt));
+  exports.Set(Napi::String::New(env, "wc_ecc_free"), Napi::Function::New(env, bind_wc_ecc_free));
 
   return exports;
 }
