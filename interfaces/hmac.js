@@ -1,4 +1,4 @@
-/* WolfSSLHmac.ts
+/* hmac.js
  *
  * Copyright (C) 2006-2022 wolfSSL Inc.
  *
@@ -18,39 +18,52 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-const wolfcrypt = require( './build/Release/wolfcrypt' );
+const wolfcrypt = require( '../build/Release/wolfcrypt' );
 const stream = require( 'stream' );
 
-export class WolfSSLHmac
+class WolfSSLHmac
 {
-  // actually holds a pointer but nodejs has no pointer type
-  private hmac: Buffer = null
-  private hashType: number = -1
-  private digestLength: number = -1
-
-  public constructor( type: string, key: Buffer )
+  /**
+   * Creates a new hmac by calling wc_HmacSetKey
+   *
+   * @param type the hashing algorithm to use
+   * @param key hmac key
+   *
+   * @remarks finalize or free must be called to free the cipher
+   */
+  constructor( type, key )
   {
     this.hmac = Buffer.alloc( wolfcrypt.sizeof_Hmac() )
+
     this.hashType = wolfcrypt.typeof_Hmac( type )
+
+    if ( this.hashType == -1 )
+    {
+      throw `Hashing algorithm ${ type } not recognized`
+    }
+
     this.digestLength = wolfcrypt.Hmac_digest_length( this.hashType )
 
     wolfcrypt.wc_HmacSetKey( this.hmac, this.hashType, key, key.length )
   }
 
   /**
-   * Updates the internal state with data for hash.
+   * Adds to the hash with data
    *
    * @param data The data that will be added to the hash.
    *
-   * @throws {Error} If the hash fails.
-   *
-   * @remarks This function should be called multiple times.
+   * @remarks This function can be called multiple times.
    */
-  public update(data: Buffer)
+  update( data )
   {
     if ( this.hmac == null )
     {
       throw 'Hmac is not allocated'
+    }
+
+    if ( typeof data == 'string' )
+    {
+      data = Buffer.from( data )
     }
 
     let ret = wolfcrypt.wc_HmacUpdate( this.hmac, data, data.length )
@@ -62,16 +75,15 @@ export class WolfSSLHmac
   }
 
   /**
-   * Finalize the hmac process.
+   * Computes the digest of the hash data
    *
-   * @returns The digest of the hashed data.
+   * @param data The data that will be added to the hash.
    *
-   * @throws {Error} If the digest fails.
+   * @returns The digest of the hash data
    *
-   * @remarks This function should be called once to finalize the hmac
-   * process.
+   * @remarks This function can only be called once
    */
-  public finalize(): Buffer
+  finalize()
   {
     if ( this.hmac == null )
     {
@@ -82,8 +94,7 @@ export class WolfSSLHmac
 
     let ret = wolfcrypt.wc_HmacFinal( this.hmac, outBuffer )
 
-    wolfcrypt.wc_HmacFree( this.hmac )
-    this.hmac = null
+    this.free()
 
     if ( ret != 0 )
     {
@@ -93,7 +104,16 @@ export class WolfSSLHmac
     return outBuffer
   }
 
-  public free()
+  /**
+   * Frees the hmac by calling wc_HmacFree
+   *
+   * @throws {Error} If the hmac pointer is set to null
+   *
+   * @remarks This function should be called if the caller
+   * no longer wants to use the hmac, update and finalize
+   * will throw errors if free has been called
+   */
+  free()
   {
     if ( this.hmac != null )
     {
@@ -105,40 +125,36 @@ export class WolfSSLHmac
       throw 'Hmac is not allocated'
     }
   }
-
-  /**
-   * Enables the FIPS mode.
-   */
-  /*
-  private enableFips(): void {
-    if (!wolfssl.isFipsEnabled() && !wolfssl.enableFips()) {
-      logger.logWarning('FIPS mode not available.');
-    }
-  }
-  */
 }
 
-export class WolfSSLHmacStream extends stream.Transform
-{
-  private hmac: WolfSSLHmac
+exports.WolfSSLHmac = WolfSSLHmac
 
+class WolfSSLHmacStream extends stream.Transform
+{
   /**
-   * Initializes a new instance of the WolfSSLEncryptionStream class.
+   * Creates a new Hmac stream
    *
-   * @param cipher The cipher name to use.
-   * @param key    The decryption key to use.
-   * @param iv     The initialization vector.
+   * @param type   The hashing algorithm to use
+   * @param key    The key to use
    *
-   * @throws {Error} If cipher is not available or unknown.
-   * @throws {Error} If the creation of the Decryption object failed.
+   * @throws {Error} If hashing algorithm is not available or unknown.
+   * @throws {Error} If the creation of the Hmac object failed.
    */
-  public constructor( type: string, key: Buffer )
+  constructor( type, key )
   {
     super()
     this.hmac = new WolfSSLHmac( type, key )
   }
 
-  public _transform( chunk: Buffer, enc: BufferEncoding, cb: Function )
+  /**
+   * Transforms input data by hashing it with hmac.update
+   *
+   * @param chunk the data to be hashed
+   * @param enc encoding of the chunk
+   * @param cb the callback function that handles
+   * the next task of the stream
+   */
+  _transform( chunk, enc, cb )
   {
     let buffer = Buffer.isBuffer( chunk ) ? chunk: new Buffer( chunk, enc )
 
@@ -147,7 +163,14 @@ export class WolfSSLHmacStream extends stream.Transform
     cb()
   }
 
-  public _flush( cb: Function )
+  /**
+   * Called when the end of input is reached, call hmac.finalize
+   * to finish the hashing and compute the digest
+   *
+   * @param cb the callback function that handles
+   * the next task of the stream
+   */
+  _flush( cb )
   {
     let ret_buffer = this.hmac.finalize()
 
@@ -159,3 +182,5 @@ export class WolfSSLHmacStream extends stream.Transform
     cb()
   }
 }
+
+exports.WolfSSLHmacStream = WolfSSLHmacStream

@@ -1,4 +1,4 @@
-/* app.js
+/* evp.h
  *
  * Copyright (C) 2006-2022 wolfSSL Inc.
  *
@@ -18,35 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-const evp_tests = require( './tests/evp' );
-const hmac_tests = require( './tests/hmac' );
-const rsa_tests = require( './tests/rsa' );
-const sha_tests = require( './tests/sha' );
-const ecc_tests = require( './tests/ecc' );
+#include <napi.h>
+#include <stdio.h>
+#include <cstring>
+#include "wolfssl/options.h"
+#include "wolfssl/ssl.h"
+#include <wolfssl/wolfcrypt/settings.h>
+#include <wolfssl/openssl/evp.h>
 
-(async function() {
-  for ( const key of Object.keys( evp_tests ) )
-  {
-    await evp_tests[key]()
-  }
-
-  for ( const key of Object.keys( hmac_tests ) )
-  {
-    await hmac_tests[key]()
-  }
-
-  for ( const key of Object.keys( rsa_tests ) )
-  {
-    await rsa_tests[key]()
-  }
-
-  for ( const key of Object.keys( sha_tests ) )
-  {
-    await sha_tests[key]()
-  }
-
-  for ( const key of Object.keys( ecc_tests ) )
-  {
-    await ecc_tests[key]()
-  }
-})()
+Napi::Value bind_EVP_CIPHER_CTX_new(const Napi::CallbackInfo& info);
+Napi::Number bind_EVP_CipherInit(const Napi::CallbackInfo& info);
+Napi::Number bind_EVP_CipherUpdate(const Napi::CallbackInfo& info);
+Napi::Number bind_EVP_CipherFinal(const Napi::CallbackInfo& info);
+void bind_EVP_CIPHER_CTX_free(const Napi::CallbackInfo& info);

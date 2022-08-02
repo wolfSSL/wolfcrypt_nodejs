@@ -25,15 +25,38 @@ Use npm to install and build:
 ```
 npm i
 npm run build
-npm run tsrun
+node app.js
 ```
 
 ## Example Output
 
 ```
-$ npm run tsrun
-> wolfcrypt_binding@1.0.0 tsrun /home/davidgarske/GitHub/wolfcrypt_nodejs
-> npx tsc main.ts && node main.js
-
-PASS
+$ node app.js
+PASS evp encrypt
+PASS evp decrypt
+PASS evp encrypt_decrypt_odd
+PASS evp encryptionStream
+PASS evp decryptionStream
+PASS evp encryptDecryptPipes
+PASS hmac hmac
+PASS hmac hmacStream
+PASS hmac hmacPipe
+PASS rsa keyToDer
+PASS rsa keyToPublicDer
+PASS rsa privateKeyDecode
+PASS rsa publicKeyDecode
+PASS rsa encryptDecrypt
+PASS rsa signVerify
+PASS sha sha
+PASS sha sha224
+PASS sha sha256
+PASS sha sha384
+PASS sha sha512
+PASS sha sha512_224
+PASS sha sha512_256
+PASS ecc makeKey
+PASS ecc sharedSecret32
+PASS ecc sharedSecret64
+PASS ecc signVerify
+PASS ecc importExport
 ```
