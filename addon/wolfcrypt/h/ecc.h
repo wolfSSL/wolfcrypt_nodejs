@@ -25,7 +25,7 @@
 
 Napi::Number sizeof_ecc_key(const Napi::CallbackInfo& info);
 Napi::Number sizeof_ecc_point(const Napi::CallbackInfo& info);
-Napi::Number ecc_key_size(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_ecc_size(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_init(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_make_key(const Napi::CallbackInfo& info);
 Napi::Number sizeof_ecc_x963(const Napi::CallbackInfo& info);

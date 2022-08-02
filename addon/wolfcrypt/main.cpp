@@ -100,7 +100,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 
   exports.Set(Napi::String::New(env, "sizeof_ecc_key"), Napi::Function::New(env, sizeof_ecc_key));
   exports.Set(Napi::String::New(env, "sizeof_ecc_point"), Napi::Function::New(env, sizeof_ecc_point));
-  exports.Set(Napi::String::New(env, "ecc_key_size"), Napi::Function::New(env, ecc_key_size));
+  exports.Set(Napi::String::New(env, "wc_ecc_size"), Napi::Function::New(env, bind_wc_ecc_size));
   exports.Set(Napi::String::New(env, "wc_ecc_init"), Napi::Function::New(env, bind_wc_ecc_init));
   exports.Set(Napi::String::New(env, "wc_ecc_make_key"), Napi::Function::New(env, bind_wc_ecc_make_key));
   exports.Set(Napi::String::New(env, "sizeof_ecc_x963"), Napi::Function::New(env, sizeof_ecc_x963));

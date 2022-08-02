@@ -113,7 +113,7 @@ class WolfSSLEcc
       throw 'Ecc not allocated'
     }
 
-    const keySize = wolfcrypt.ecc_key_size( this.ecc )
+    const keySize = wolfcrypt.wc_ecc_size( this.ecc )
 
     if ( keySize <= 0 )
     {

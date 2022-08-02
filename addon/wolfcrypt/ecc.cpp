@@ -34,12 +34,15 @@ Napi::Number sizeof_ecc_point(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, sizeof( ecc_point ) );
 }
 
-Napi::Number ecc_key_size(const Napi::CallbackInfo& info)
+Napi::Number bind_wc_ecc_size(const Napi::CallbackInfo& info)
 {
+  int ret;
   Napi::Env env = info.Env();
   ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
 
-  return Napi::Number::New( env, ecc->dp->size );
+  ret = wc_ecc_size( ecc );
+
+  return Napi::Number::New( env, ret );
 }
 
 Napi::Number bind_wc_ecc_init(const Napi::CallbackInfo& info)
