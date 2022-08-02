@@ -1,4 +1,4 @@
-/* hmac.h
+/* app.js
  *
  * Copyright (C) 2006-2022 wolfSSL Inc.
  *
@@ -35,12 +35,10 @@ const ecc_tests = require( './tests/ecc' );
     await hmac_tests[key]()
   }
 
-  /*
   for ( const key of Object.keys( rsa_tests ) )
   {
     await rsa_tests[key]()
   }
-  */
 
   for ( const key of Object.keys( sha_tests ) )
   {

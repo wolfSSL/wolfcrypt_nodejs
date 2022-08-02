@@ -50,10 +50,13 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_InitRsaKey"), Napi::Function::New(env, bind_wc_InitRsaKey));
   exports.Set(Napi::String::New(env, "wc_MakeRsaKey"), Napi::Function::New(env, bind_wc_MakeRsaKey));
   exports.Set(Napi::String::New(env, "wc_RsaKeyToDer"), Napi::Function::New(env, bind_wc_RsaKeyToDer));
+  exports.Set(Napi::String::New(env, "wc_RsaKeyToPublicDer"), Napi::Function::New(env, bind_wc_RsaKeyToPublicDer));
   exports.Set(Napi::String::New(env, "wc_RsaPrivateKeyDecode"), Napi::Function::New(env, bind_wc_RsaPrivateKeyDecode));
   exports.Set(Napi::String::New(env, "wc_RsaPublicKeyDecode"), Napi::Function::New(env, bind_wc_RsaPublicKeyDecode));
   exports.Set(Napi::String::New(env, "wc_RsaPublicEncrypt"), Napi::Function::New(env, bind_wc_RsaPublicEncrypt));
   exports.Set(Napi::String::New(env, "wc_RsaPrivateDecrypt"), Napi::Function::New(env, bind_wc_RsaPrivateDecrypt));
+  exports.Set(Napi::String::New(env, "wc_RsaSSL_Sign"), Napi::Function::New(env, bind_wc_RsaSSL_Sign));
+  exports.Set(Napi::String::New(env, "wc_RsaSSL_Verify"), Napi::Function::New(env, bind_wc_RsaSSL_Verify));
   exports.Set(Napi::String::New(env, "wc_FreeRsaKey"), Napi::Function::New(env, bind_wc_FreeRsaKey));
 
   exports.Set(Napi::String::New(env, "Sha_digest_length"), Napi::Function::New(env, Sha_digest_length));

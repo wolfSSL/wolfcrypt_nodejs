@@ -59,6 +59,7 @@ class WolfSSLEcc
       throw 'Ecc not allocated'
     }
 
+    // TODO is there a way to know this ahead of time to make sure our asnBuf is big enough
     let asnBuf = Buffer.alloc( 2048 )
 
     let ret = wolfcrypt.wc_ecc_export_x963( this.ecc, asnBuf, asnBuf.length )

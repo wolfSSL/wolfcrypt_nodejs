@@ -41,13 +41,14 @@ class WolfSSLRsa
     }
   }
 
-  RsaKeyToDer()
+  KeyToDer()
   {
     if ( this.size == -1 || this.rsa == null )
     {
       throw 'Invalid rsa key'
     }
 
+    // TODO is there a way to know this ahead of time or shrink afterwards?
     let derBuf = Buffer.alloc( this.size )
 
     let ret = wolfcrypt.wc_RsaKeyToDer( this.rsa, derBuf, this.size )
@@ -60,11 +61,36 @@ class WolfSSLRsa
     return derBuf
   }
 
-  RsaPrivateKeyDecode( derBuf )
+  KeyToPublicDer()
+  {
+    if ( this.size == -1 || this.rsa == null )
+    {
+      throw 'Invalid rsa key'
+    }
+
+    // TODO is there a way to know this ahead of time or shrink afterwards?
+    let derBuf = Buffer.alloc( this.size )
+
+    let ret = wolfcrypt.wc_RsaKeyToPublicDer( this.rsa, derBuf, derBuf.length )
+
+    if ( ret < 0 )
+    {
+      throw `Failed to wc_RsaKeyToPublicDer ${ ret }`
+    }
+
+    return derBuf
+  }
+
+  PrivateKeyDecode( derBuf, size )
   {
     if ( this.rsa == null )
     {
       throw 'Invalid rsa key'
+    }
+
+    if ( !Buffer.isBuffer( derBuf ) )
+    {
+      throw 'Private key der must be Buffer'
     }
 
     let ret = wolfcrypt.wc_RsaPrivateKeyDecode( derBuf, this.rsa, derBuf.length )
@@ -73,9 +99,11 @@ class WolfSSLRsa
     {
       throw `Failed to wc_RsaPrivateKeyDecode ${ ret }`
     }
+
+    this.size = size
   }
 
-  RsaPublicKeyDecode( derBuf )
+  PublicKeyDecode( derBuf, size )
   {
     if ( this.rsa == null )
     {
@@ -88,9 +116,11 @@ class WolfSSLRsa
     {
       throw `Failed to wc_RsaPublicKeyDecode ${ ret }`
     }
+
+    this.size = size
   }
 
-  RsaPublicEncrypt( data )
+  PublicEncrypt( data )
   {
     if ( this.rsa == null )
     {
@@ -111,10 +141,12 @@ class WolfSSLRsa
       throw `Failed to wc_RsaPublicEncrypt ${ ret }`
     }
 
+    ciphertext = ciphertext.subarray( 0, ret )
+
     return ciphertext
   }
 
-  RsaPrivateDecrypt( ciphertext )
+  PrivateDecrypt( ciphertext )
   {
     if ( this.rsa == null )
     {
@@ -135,10 +167,68 @@ class WolfSSLRsa
       throw `Failed to wc_RsaPrivateDecrypt ${ ret }`
     }
 
-    return ciphertext
+    data = data.subarray( 0, ret )
+
+    return data
   }
 
-  FreeRsaKey()
+  SSL_Sign( data )
+  {
+    if ( this.rsa == null )
+    {
+      throw 'Invalid rsa key'
+    }
+
+    if ( typeof data == 'string' )
+    {
+      data = Buffer.from( data )
+    }
+
+    let sig = Buffer.alloc( this.size / 8 )
+
+    let ret = wolfcrypt.wc_RsaSSL_Sign( data, data.length, sig, sig.length, this.rsa )
+
+    if ( ret <= 0 )
+    {
+      throw `Failed to wc_RsaSSL_Sign ${ ret }`
+    }
+
+    return sig
+  }
+
+  SSL_Verify( sig, data )
+  {
+    if ( this.rsa == null )
+    {
+      throw 'Invalid rsa key'
+    }
+
+    if ( !Buffer.isBuffer( sig ) )
+    {
+      throw `signature must be a Buffer`
+    }
+
+    if ( typeof data == 'string' )
+    {
+      data = Buffer.from( data )
+    }
+
+    let validLength = wolfcrypt.wc_RsaSSL_Verify( sig, sig.length, data, data.length, this.rsa )
+
+    if ( validLength < 0 )
+    {
+      throw `Failed to wc_RsaSSL_Verify ${ validLength }`
+    }
+
+    if ( validLength == data.length )
+    {
+      return true
+    }
+
+    return false
+  }
+
+  free()
   {
     wolfcrypt.wc_FreeRsaKey( this.rsa )
     this.rsa = null

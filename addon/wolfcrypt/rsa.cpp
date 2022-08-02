@@ -77,6 +77,19 @@ Napi::Number bind_wc_RsaKeyToDer(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, ret );
 }
 
+Napi::Number bind_wc_RsaKeyToPublicDer(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
+  uint8_t* out = info[1].As<Napi::Uint8Array>().Data();
+  int outSz = info[2].As<Napi::Number>().Int32Value();
+
+  ret = wc_RsaKeyToPublicDer( rsa, out, outSz );
+
+  return Napi::Number::New( env, ret );
+}
+
 Napi::Number bind_wc_RsaPrivateKeyDecode(const Napi::CallbackInfo& info)
 {
   int ret;
@@ -110,12 +123,12 @@ Napi::Number bind_wc_RsaPublicEncrypt(const Napi::CallbackInfo& info)
   int ret;
   Napi::Env env = info.Env();
   uint8_t* in = info[0].As<Napi::Uint8Array>().Data();
-  int inLen = info[1].As<Napi::Number>().Int32Value();
+  int in_len = info[1].As<Napi::Number>().Int32Value();
   uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
-  int outLen = info[3].As<Napi::Number>().Int32Value();
+  int out_len = info[3].As<Napi::Number>().Int32Value();
   RsaKey* rsa = (RsaKey*)( info[4].As<Napi::Uint8Array>().Data() );
 
-  ret = wc_RsaPublicEncrypt( in, inLen, out, outLen, rsa, rsa->rng );
+  ret = wc_RsaPublicEncrypt( in, in_len, out, out_len, rsa, rsa->rng );
 
   return Napi::Number::New( env, ret );
 }
@@ -125,12 +138,42 @@ Napi::Number bind_wc_RsaPrivateDecrypt(const Napi::CallbackInfo& info)
   int ret;
   Napi::Env env = info.Env();
   uint8_t* in = info[0].As<Napi::Uint8Array>().Data();
-  int inLen = info[1].As<Napi::Number>().Int32Value();
+  int in_len = info[1].As<Napi::Number>().Int32Value();
   uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
-  int outLen = info[3].As<Napi::Number>().Int32Value();
+  int out_len = info[3].As<Napi::Number>().Int32Value();
   RsaKey* rsa = (RsaKey*)( info[4].As<Napi::Uint8Array>().Data() );
 
-  ret = wc_RsaPrivateDecrypt( in, inLen, out, outLen, rsa );
+  ret = wc_RsaPrivateDecrypt( in, in_len, out, out_len, rsa );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_RsaSSL_Sign(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  uint8_t* in = info[0].As<Napi::Uint8Array>().Data();
+  int in_len = info[1].As<Napi::Number>().Int32Value();
+  uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
+  int out_len = info[3].As<Napi::Number>().Int32Value();
+  RsaKey* rsa = (RsaKey*)( info[4].As<Napi::Uint8Array>().Data() );
+
+  ret = wc_RsaSSL_Sign( in, in_len, out, out_len, rsa, rsa->rng );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_RsaSSL_Verify(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  uint8_t* in = info[0].As<Napi::Uint8Array>().Data();
+  int in_len = info[1].As<Napi::Number>().Int32Value();
+  uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
+  int out_len = info[3].As<Napi::Number>().Int32Value();
+  RsaKey* rsa = (RsaKey*)( info[4].As<Napi::Uint8Array>().Data() );
+
+  ret = wc_RsaSSL_Verify( in, in_len, out, out_len, rsa );
 
   return Napi::Number::New( env, ret );
 }
