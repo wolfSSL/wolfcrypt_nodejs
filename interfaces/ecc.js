@@ -25,7 +25,6 @@ class WolfSSLEcc
   constructor()
   {
     this.ecc = Buffer.alloc( wolfcrypt.sizeof_ecc_key() )
-    this.size = -1
 
     let ret = wolfcrypt.wc_ecc_init( this.ecc )
 
@@ -48,8 +47,6 @@ class WolfSSLEcc
     {
       throw `Failed to wc_ecc_make_key ${ ret }`
     }
-
-    this.size = size
   }
 
   export_x963()
@@ -59,8 +56,8 @@ class WolfSSLEcc
       throw 'Ecc not allocated'
     }
 
-    // TODO is there a way to know this ahead of time to make sure our asnBuf is big enough
-    let asnBuf = Buffer.alloc( 2048 )
+    // passing null will return the size
+    let asnBuf = Buffer.alloc( wolfcrypt.sizeof_ecc_x963( this.ecc ) )
 
     let ret = wolfcrypt.wc_ecc_export_x963( this.ecc, asnBuf, asnBuf.length )
 
@@ -116,11 +113,18 @@ class WolfSSLEcc
       throw 'Ecc not allocated'
     }
 
-    let secret = Buffer.alloc( this.size )
+    const keySize = wolfcrypt.ecc_key_size( this.ecc )
 
-    let ret = wolfcrypt.wc_ecc_shared_secret( this.ecc, pubEcc.ecc, secret, this.size )
+    if ( keySize <= 0 )
+    {
+      throw `Failed to ecc_key_size ${ keySize }`
+    }
 
-    if ( ret != this.size )
+    let secret = Buffer.alloc( keySize )
+
+    let ret = wolfcrypt.wc_ecc_shared_secret( this.ecc, pubEcc.ecc, secret, keySize )
+
+    if ( ret != keySize )
     {
       throw `Failed to wc_ecc_shared_secret ${ ret }`
     }

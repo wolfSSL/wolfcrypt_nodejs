@@ -34,6 +34,14 @@ Napi::Number sizeof_ecc_point(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, sizeof( ecc_point ) );
 }
 
+Napi::Number ecc_key_size(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
+
+  return Napi::Number::New( env, ecc->dp->size );
+}
+
 Napi::Number bind_wc_ecc_init(const Napi::CallbackInfo& info)
 {
   int ret;
@@ -58,6 +66,17 @@ Napi::Number bind_wc_ecc_make_key(const Napi::CallbackInfo& info)
   ret = wc_ecc_make_key( ecc->rng, key_size, ecc );
 
   return Napi::Number::New( env, ret );
+}
+
+Napi::Number sizeof_ecc_x963(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
+  unsigned int out_len;
+
+  wc_ecc_export_x963( ecc, NULL, &out_len );
+
+  return Napi::Number::New( env, out_len );
 }
 
 Napi::Number bind_wc_ecc_export_x963(const Napi::CallbackInfo& info)

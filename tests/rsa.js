@@ -46,7 +46,7 @@ const rsa_tests =
   {
     let rsa = new WolfSSLRsa()
 
-    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ), 2048 )
+    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ) )
 
     const derHex = rsa.KeyToPublicDer().toString( 'hex' )
 
@@ -59,7 +59,7 @@ const rsa_tests =
   {
     let rsa = new WolfSSLRsa()
 
-    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ), 2048 )
+    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ) )
 
     const sigHex = rsa.SSL_Sign( message ).toString( 'hex' )
 
@@ -79,7 +79,7 @@ const rsa_tests =
   {
     let rsa = new WolfSSLRsa()
 
-    rsa.PublicKeyDecode( Buffer.from( publicDerHex, 'hex' ), 2048 )
+    rsa.PublicKeyDecode( Buffer.from( publicDerHex, 'hex' ) )
 
     if ( rsa.SSL_Verify( Buffer.from( rsaSigHex, 'hex' ), message ) )
     {
@@ -97,7 +97,7 @@ const rsa_tests =
   {
     let rsa = new WolfSSLRsa()
 
-    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ), 2048 )
+    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ) )
 
     const ciphertext = rsa.PublicEncrypt( message )
     const plaintext = rsa.PrivateDecrypt( ciphertext ).toString()
@@ -118,7 +118,7 @@ const rsa_tests =
   {
     let rsa = new WolfSSLRsa()
 
-    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ), 2048 )
+    rsa.PrivateKeyDecode( Buffer.from( privateDerHex, 'hex' ) )
 
     const sig = rsa.SSL_Sign( message )
 

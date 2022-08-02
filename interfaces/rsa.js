@@ -25,14 +25,11 @@ class WolfSSLRsa
   constructor()
   {
     this.rsa = Buffer.alloc( wolfcrypt.sizeof_RsaKey() )
-    this.size = -1
     wolfcrypt.wc_InitRsaKey( this.rsa )
   }
 
   MakeRsaKey( size, e )
   {
-    this.size = size
-
     let ret = wolfcrypt.wc_MakeRsaKey( this.rsa, size, e )
 
     if ( ret != 0 )
@@ -43,15 +40,14 @@ class WolfSSLRsa
 
   KeyToDer()
   {
-    if ( this.size == -1 || this.rsa == null )
+    if ( this.rsa == null )
     {
       throw 'Invalid rsa key'
     }
 
-    // TODO is there a way to know this ahead of time or shrink afterwards?
-    let derBuf = Buffer.alloc( this.size )
+    let derBuf = Buffer.alloc( wolfcrypt.RsaPrivateDerSize( this.rsa ) )
 
-    let ret = wolfcrypt.wc_RsaKeyToDer( this.rsa, derBuf, this.size )
+    let ret = wolfcrypt.wc_RsaKeyToDer( this.rsa, derBuf, derBuf.length )
 
     if ( ret <= 0 )
     {
@@ -63,13 +59,12 @@ class WolfSSLRsa
 
   KeyToPublicDer()
   {
-    if ( this.size == -1 || this.rsa == null )
+    if ( this.rsa == null )
     {
       throw 'Invalid rsa key'
     }
 
-    // TODO is there a way to know this ahead of time or shrink afterwards?
-    let derBuf = Buffer.alloc( this.size )
+    let derBuf = Buffer.alloc( wolfcrypt.RsaPublicDerSize( this.rsa ) )
 
     let ret = wolfcrypt.wc_RsaKeyToPublicDer( this.rsa, derBuf, derBuf.length )
 
@@ -81,7 +76,7 @@ class WolfSSLRsa
     return derBuf
   }
 
-  PrivateKeyDecode( derBuf, size )
+  PrivateKeyDecode( derBuf )
   {
     if ( this.rsa == null )
     {
@@ -99,15 +94,18 @@ class WolfSSLRsa
     {
       throw `Failed to wc_RsaPrivateKeyDecode ${ ret }`
     }
-
-    this.size = size
   }
 
-  PublicKeyDecode( derBuf, size )
+  PublicKeyDecode( derBuf )
   {
     if ( this.rsa == null )
     {
       throw 'Invalid rsa key'
+    }
+
+    if ( !Buffer.isBuffer( derBuf ) )
+    {
+      throw 'Public key der must be Buffer'
     }
 
     let ret = wolfcrypt.wc_RsaPublicKeyDecode( derBuf, this.rsa, derBuf.length )
@@ -116,8 +114,6 @@ class WolfSSLRsa
     {
       throw `Failed to wc_RsaPublicKeyDecode ${ ret }`
     }
-
-    this.size = size
   }
 
   PublicEncrypt( data )
@@ -184,7 +180,7 @@ class WolfSSLRsa
       data = Buffer.from( data )
     }
 
-    let sig = Buffer.alloc( this.size / 8 )
+    let sig = Buffer.alloc( wolfcrypt.wc_RsaEncryptSize( this.rsa ) )
 
     let ret = wolfcrypt.wc_RsaSSL_Sign( data, data.length, sig, sig.length, this.rsa )
 

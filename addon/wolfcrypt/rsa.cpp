@@ -64,6 +64,17 @@ Napi::Number bind_wc_MakeRsaKey(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, ret );
 }
 
+Napi::Number RsaPrivateDerSize(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
+
+  ret = wc_RsaKeyToDer( rsa, NULL, 0 );
+
+  return Napi::Number::New( env, ret );
+}
+
 Napi::Number bind_wc_RsaKeyToDer(const Napi::CallbackInfo& info)
 {
   int ret;
@@ -73,6 +84,17 @@ Napi::Number bind_wc_RsaKeyToDer(const Napi::CallbackInfo& info)
   int outSz = info[2].As<Napi::Number>().Int32Value();
 
   ret = wc_RsaKeyToDer( rsa, out, outSz );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number RsaPublicDerSize(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
+
+  ret = wc_RsaKeyToPublicDer( rsa, NULL, 0 );
 
   return Napi::Number::New( env, ret );
 }
