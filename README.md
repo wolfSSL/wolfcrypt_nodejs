@@ -41,6 +41,12 @@ PASS evp encryptDecryptPipes
 PASS hmac hmac
 PASS hmac hmacStream
 PASS hmac hmacPipe
+PASS rsa keyToDer
+PASS rsa keyToPublicDer
+PASS rsa privateKeyDecode
+PASS rsa publicKeyDecode
+PASS rsa encryptDecrypt
+PASS rsa signVerify
 PASS sha sha
 PASS sha sha224
 PASS sha sha256
@@ -48,4 +54,9 @@ PASS sha sha384
 PASS sha sha512
 PASS sha sha512_224
 PASS sha sha512_256
+PASS ecc makeKey
+PASS ecc sharedSecret32
+PASS ecc sharedSecret64
+PASS ecc signVerify
+PASS ecc importExport
 ```

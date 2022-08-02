@@ -167,9 +167,11 @@ Napi::Number bind_wc_ecc_sign_hash(const Napi::CallbackInfo& info)
   unsigned int out_len = info[3].As<Napi::Number>().Int32Value();
   ecc_key* ecc = (ecc_key*)( info[4].As<Napi::Uint8Array>().Data() );
 
-  wc_InitRng( &rng );
-
-  ret = wc_ecc_sign_hash( in, in_len, out, &out_len, &rng, ecc );
+  ret = wc_InitRng( &rng );
+  if (ret == 0)
+  {
+    ret = wc_ecc_sign_hash( in, in_len, out, &out_len, &rng, ecc );
+  }
 
   if ( ret < 0 )
   {
@@ -191,7 +193,6 @@ Napi::Number bind_wc_ecc_verify_hash(const Napi::CallbackInfo& info)
   int res;
 
   ret = wc_ecc_verify_hash( sig, sig_len, hash, hash_len, &res, ecc );
-
   if ( ret < 0 )
   {
     res = ret;

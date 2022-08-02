@@ -104,7 +104,7 @@ const ecc_tests =
     ecc0.free()
   },
 
-  // Vandaly Industries
+  // Validate Industries
   importExport: function()
   {
     let ecc0 = new WolfSSLEcc()
