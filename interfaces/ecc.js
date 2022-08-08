@@ -91,6 +91,84 @@ class WolfSSLEcc
     }
   }
 
+  PublicKeyToDer()
+  {
+    if ( this.ecc == null )
+    {
+      throw 'Ecc not allocated'
+    }
+
+    let derBuf = Buffer.alloc( wolfcrypt.wc_EccPublicKeyDerSize( this.ecc ) )
+
+    let ret = wolfcrypt.wc_EccPublicKeyToDer( this.ecc, derBuf, derBuf.length )
+
+    if ( ret <= 0 )
+    {
+      throw `Failed to wc_EccPublicKeyToDer ${ ret }`
+    }
+
+    return derBuf
+  }
+
+  PublicKeyDecode( derBuf )
+  {
+    if ( this.ecc == null )
+    {
+      throw 'Ecc not allocated'
+    }
+
+    if ( !Buffer.isBuffer( derBuf ) )
+    {
+      throw 'Public key der must be a Buffer'
+    }
+
+    let ret = wolfcrypt.wc_EccPublicKeyDecode( derBuf, this.ecc, derBuf.length )
+
+    if ( ret != 0 )
+    {
+      throw `Failed to wc_EccPublicKeyDecode ${ ret }`
+    }
+  }
+
+  PrivateKeyToDer()
+  {
+    if ( this.ecc == null )
+    {
+      throw 'Ecc not allocated'
+    }
+
+    let derBuf = Buffer.alloc( wolfcrypt.wc_EccKeyDerSize( this.ecc, 0 ) )
+
+    let ret = wolfcrypt.wc_EccPrivateKeyToDer( this.ecc, derBuf, derBuf.length )
+
+    if ( ret <= 0 )
+    {
+      throw `Failed to wc_EccPrivateKeyToDer ${ ret }`
+    }
+
+    return derBuf
+  }
+
+  PrivateKeyDecode( derBuf )
+  {
+    if ( this.ecc == null )
+    {
+      throw 'Ecc not allocated'
+    }
+
+    if ( !Buffer.isBuffer( derBuf ) )
+    {
+      throw 'Private key der must be a Buffer'
+    }
+
+    let ret = wolfcrypt.wc_EccPrivateKeyDecode( derBuf, this.ecc, derBuf.length )
+
+    if ( ret != 0 )
+    {
+      throw `Failed to wc_EccPrivateKeyDecode ${ ret }`
+    }
+  }
+
   set_curve( keySize, curveId )
   {
     if ( this.ecc == null )

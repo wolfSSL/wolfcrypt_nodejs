@@ -104,8 +104,7 @@ const ecc_tests =
     ecc0.free()
   },
 
-  // Validate Industries
-  importExport: function()
+  importExportx963: function()
   {
     let ecc0 = new WolfSSLEcc()
     let ecc1 = new WolfSSLEcc()
@@ -130,6 +129,41 @@ const ecc_tests =
     ecc0.free()
     ecc1.free()
   },
+
+  importExportDer: function()
+  {
+    let ecc0 = new WolfSSLEcc()
+    let ecc1 = new WolfSSLEcc()
+    let ecc2 = new WolfSSLEcc()
+
+    ecc0.make_key( 32 )
+
+    const sigBefore = ecc0.sign_hash( message )
+
+    let privKeyDer = ecc0.PrivateKeyToDer()
+    let pubKeyDer = ecc0.PublicKeyToDer()
+
+    ecc0.free()
+
+    ecc0 = new WolfSSLEcc()
+
+    ecc1.PrivateKeyDecode( privKeyDer )
+    ecc2.PublicKeyDecode( pubKeyDer )
+
+    const sigAfter = ecc1.sign_hash( message )
+
+    if ( ecc2.verify_hash( sigBefore, message ) == true && ecc2.verify_hash( sigAfter, message ) )
+    {
+      console.log( 'PASS ecc importExport' )
+    }
+    else
+    {
+      console.log( 'FAIL ecc importExport public' )
+    }
+
+    ecc1.free()
+    ecc2.free()
+  }
 }
 
 module.exports = ecc_tests
