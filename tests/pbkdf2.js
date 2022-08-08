@@ -1,4 +1,4 @@
-/* app.js
+/* pbkdf2.js
  *
  * Copyright (C) 2006-2022 wolfSSL Inc.
  *
@@ -18,41 +18,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-const evp_tests = require( './tests/evp' );
-const hmac_tests = require( './tests/hmac' );
-const rsa_tests = require( './tests/rsa' );
-const sha_tests = require( './tests/sha' );
-const ecc_tests = require( './tests/ecc' );
-const pbkdf2_tests = require( './tests/pbkdf2' );
 
-(async function() {
-  for ( const key of Object.keys( evp_tests ) )
-  {
-    await evp_tests[key]()
-  }
+const { WolfSSL_PBDKF2 } = require( '../interfaces/pbkdf2' )
 
-  for ( const key of Object.keys( hmac_tests ) )
+const pbkdf2_tests = 
+{
+  pbkdf2: function()
   {
-    await hmac_tests[key]()
-  }
+    const password = Buffer.from( 'super secret password' )
+    const salt = Buffer.from( 'super secret salt' )
 
-  for ( const key of Object.keys( rsa_tests ) )
-  {
-    await rsa_tests[key]()
-  }
+    const key1 = WolfSSL_PBDKF2( password, salt, 2048, 64, 'SHA512' )
+    const key2 = WolfSSL_PBDKF2( password, salt, 2048, 64, 'SHA512' )
 
-  for ( const key of Object.keys( sha_tests ) )
-  {
-    await sha_tests[key]()
+    if ( key1.toString( 'hex' ) == key2.toString( 'hex' ) )
+    {
+      console.log( 'PASS pbkdf2' );
+    }
+    else
+    {
+      console.log( 'FAIL pbkdf2', key1.toString( 'hex' ), key2.toString( 'hex' ) );
+    }
   }
+}
 
-  for ( const key of Object.keys( ecc_tests ) )
-  {
-    await ecc_tests[key]()
-  }
-
-  for ( const key of Object.keys( pbkdf2_tests ) )
-  {
-    await pbkdf2_tests[key]()
-  }
-})()
+module.exports = pbkdf2_tests
