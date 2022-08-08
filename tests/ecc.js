@@ -119,11 +119,11 @@ const ecc_tests =
 
     if ( ecc1.verify_hash( sig, message ) == true )
     {
-      console.log( 'PASS ecc importExport' )
+      console.log( 'PASS ecc importExportx963' )
     }
     else
     {
-      console.log( 'FAIL ecc importExport', sig.toString( 'hex' ) )
+      console.log( 'FAIL ecc importExportx963', sig.toString( 'hex' ) )
     }
 
     ecc0.free()
@@ -145,20 +145,18 @@ const ecc_tests =
 
     ecc0.free()
 
-    ecc0 = new WolfSSLEcc()
-
     ecc1.PrivateKeyDecode( privKeyDer )
     ecc2.PublicKeyDecode( pubKeyDer )
 
     const sigAfter = ecc1.sign_hash( message )
 
-    if ( ecc2.verify_hash( sigBefore, message ) == true && ecc2.verify_hash( sigAfter, message ) )
+    if ( ecc2.verify_hash( sigBefore, message ) == true && ecc2.verify_hash( sigAfter, message ) == true )
     {
-      console.log( 'PASS ecc importExport' )
+      console.log( 'PASS ecc importExportDer' )
     }
     else
     {
-      console.log( 'FAIL ecc importExport public' )
+      console.log( 'FAIL ecc importExportDer public' )
     }
 
     ecc1.free()
