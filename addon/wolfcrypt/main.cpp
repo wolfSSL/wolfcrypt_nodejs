@@ -106,6 +106,12 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "sizeof_ecc_x963"), Napi::Function::New(env, sizeof_ecc_x963));
   exports.Set(Napi::String::New(env, "wc_ecc_export_x963"), Napi::Function::New(env, bind_wc_ecc_export_x963));
   exports.Set(Napi::String::New(env, "wc_ecc_import_x963"), Napi::Function::New(env, bind_wc_ecc_import_x963));
+  exports.Set(Napi::String::New(env, "wc_EccKeyDerSize"), Napi::Function::New(env, bind_wc_EccKeyDerSize));
+  exports.Set(Napi::String::New(env, "wc_EccPublicKeyToDer"), Napi::Function::New(env, bind_wc_EccPublicKeyToDer));
+  exports.Set(Napi::String::New(env, "wc_EccPublicKeyDecode"), Napi::Function::New(env, bind_wc_EccPublicKeyDecode));
+  exports.Set(Napi::String::New(env, "wc_EccPublicKeyDerSize"), Napi::Function::New(env, bind_wc_EccPublicKeyDerSize));
+  exports.Set(Napi::String::New(env, "wc_EccPrivateKeyToDer"), Napi::Function::New(env, bind_wc_EccPrivateKeyToDer));
+  exports.Set(Napi::String::New(env, "wc_EccPrivateKeyDecode"), Napi::Function::New(env, bind_wc_EccPrivateKeyDecode));
   exports.Set(Napi::String::New(env, "wc_ecc_set_curve"), Napi::Function::New(env, bind_wc_ecc_set_curve));
   exports.Set(Napi::String::New(env, "wc_ecc_shared_secret"), Napi::Function::New(env, bind_wc_ecc_shared_secret));
   exports.Set(Napi::String::New(env, "wc_ecc_sig_size"), Napi::Function::New(env, bind_wc_ecc_sig_size));

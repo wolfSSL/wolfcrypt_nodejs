@@ -22,6 +22,7 @@
 #include "wolfssl/options.h"
 #include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/ecc.h>
+#include <wolfssl/wolfcrypt/asn.h>
 
 Napi::Number sizeof_ecc_key(const Napi::CallbackInfo& info);
 Napi::Number sizeof_ecc_point(const Napi::CallbackInfo& info);
@@ -31,6 +32,12 @@ Napi::Number bind_wc_ecc_make_key(const Napi::CallbackInfo& info);
 Napi::Number sizeof_ecc_x963(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_export_x963(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_import_x963(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_EccKeyDerSize(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_EccPublicKeyToDer(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_EccPublicKeyDecode(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_EccPublicKeyDerSize(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_EccPrivateKeyToDer(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_EccPrivateKeyDecode(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_set_curve(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_shared_secret(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_ecc_sig_size(const Napi::CallbackInfo& info);
