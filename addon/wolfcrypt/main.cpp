@@ -26,6 +26,7 @@
 #include "./h/rsa.h"
 #include "./h/sha.h"
 #include "./h/ecc.h"
+#include "./h/pbkdf2.h"
 
 using namespace Napi;
 
@@ -118,6 +119,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_ecc_sign_hash"), Napi::Function::New(env, bind_wc_ecc_sign_hash));
   exports.Set(Napi::String::New(env, "wc_ecc_verify_hash"), Napi::Function::New(env, bind_wc_ecc_verify_hash));
   exports.Set(Napi::String::New(env, "wc_ecc_free"), Napi::Function::New(env, bind_wc_ecc_free));
+
+  exports.Set(Napi::String::New(env, "wc_PBKDF2"), Napi::Function::New(env, bind_wc_PBKDF2));
 
   return exports;
 }

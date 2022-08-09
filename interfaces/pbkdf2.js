@@ -1,4 +1,4 @@
-/* app.js
+/* pbkdf2.js
  *
  * Copyright (C) 2006-2022 wolfSSL Inc.
  *
@@ -18,41 +18,38 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-const evp_tests = require( './tests/evp' );
-const hmac_tests = require( './tests/hmac' );
-const rsa_tests = require( './tests/rsa' );
-const sha_tests = require( './tests/sha' );
-const ecc_tests = require( './tests/ecc' );
-const pbkdf2_tests = require( './tests/pbkdf2' );
 
-(async function() {
-  for ( const key of Object.keys( evp_tests ) )
+const wolfcrypt = require( '../build/Release/wolfcrypt' )
+
+const WolfSSL_PBDKF2 = function( password, salt, iterations, keyLen, hash_type )
+{
+  if ( !Buffer.isBuffer( password ) )
   {
-    await evp_tests[key]()
+    throw 'password must be Buffer'
   }
 
-  for ( const key of Object.keys( hmac_tests ) )
+  if ( !Buffer.isBuffer( salt ) )
   {
-    await hmac_tests[key]()
+    throw 'salt must be Buffer'
   }
 
-  for ( const key of Object.keys( rsa_tests ) )
+  let type = wolfcrypt.typeof_Hmac( hash_type )
+
+  if ( type < 0 )
   {
-    await rsa_tests[key]()
+    throw 'Invalid hash_type'
   }
 
-  for ( const key of Object.keys( sha_tests ) )
+  let key = Buffer.alloc( keyLen )
+
+  let ret = wolfcrypt.wc_PBKDF2( key, password, password.length, salt, salt.length, iterations, keyLen, type )
+
+  if ( ret != 0 )
   {
-    await sha_tests[key]()
+    throw `Failed to wc_PBKDF2 ${ ret }`
   }
 
-  for ( const key of Object.keys( ecc_tests ) )
-  {
-    await ecc_tests[key]()
-  }
+  return key
+}
 
-  for ( const key of Object.keys( pbkdf2_tests ) )
-  {
-    await pbkdf2_tests[key]()
-  }
-})()
+exports.WolfSSL_PBDKF2 = WolfSSL_PBDKF2
