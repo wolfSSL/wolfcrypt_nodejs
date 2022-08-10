@@ -23,6 +23,7 @@ const hmac_tests = require( './tests/hmac' );
 const rsa_tests = require( './tests/rsa' );
 const sha_tests = require( './tests/sha' );
 const ecc_tests = require( './tests/ecc' );
+const pkcs7_tests = require( './tests/pkcs7' );
 
 (async function() {
   for ( const key of Object.keys( evp_tests ) )
@@ -48,5 +49,10 @@ const ecc_tests = require( './tests/ecc' );
   for ( const key of Object.keys( ecc_tests ) )
   {
     await ecc_tests[key]()
+  }
+
+  for ( const key of Object.keys( pkcs7_tests ) )
+  {
+    await pkcs7_tests[key]()
   }
 })()

@@ -26,6 +26,7 @@
 #include "./h/rsa.h"
 #include "./h/sha.h"
 #include "./h/ecc.h"
+#include "./h/pkcs7.h"
 
 using namespace Napi;
 
@@ -112,6 +113,17 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_ecc_sign_hash"), Napi::Function::New(env, bind_wc_ecc_sign_hash));
   exports.Set(Napi::String::New(env, "wc_ecc_verify_hash"), Napi::Function::New(env, bind_wc_ecc_verify_hash));
   exports.Set(Napi::String::New(env, "wc_ecc_free"), Napi::Function::New(env, bind_wc_ecc_free));
+
+  exports.Set(Napi::String::New(env, "sizeof_PKCS7"), Napi::Function::New(env, sizeof_PKCS7));
+  exports.Set(Napi::String::New(env, "typeof_Key_Sum"), Napi::Function::New(env, typeof_Key_Sum));
+  exports.Set(Napi::String::New(env, "typeof_Hash_Sum"), Napi::Function::New(env, typeof_Hash_Sum));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_Init"), Napi::Function::New(env, bind_wc_PKCS7_Init));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_InitWithCert"), Napi::Function::New(env, bind_wc_PKCS7_InitWithCert));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_AddCertificate"), Napi::Function::New(env, bind_wc_PKCS7_AddCertificate));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_EncodeData"), Napi::Function::New(env, bind_wc_PKCS7_EncodeData));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_EncodeSignedData"), Napi::Function::New(env, bind_wc_PKCS7_EncodeSignedData));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_VerifySignedData"), Napi::Function::New(env, bind_wc_PKCS7_VerifySignedData));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_Free"), Napi::Function::New(env, bind_wc_PKCS7_Free));
 
   return exports;
 }
