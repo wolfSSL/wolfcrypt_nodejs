@@ -143,8 +143,8 @@ Napi::Number bind_wc_EccPublicKeyToDer(const Napi::CallbackInfo& info)
   uint8_t* out = (uint8_t*)( info[1].As<Napi::Uint8Array>().Data() );
   unsigned int out_len = info[2].As<Napi::Number>().Int32Value();
 
+  /* 1=export with ASN.1/DER header (which includes curve info) */
   ret = wc_EccPublicKeyToDer( ecc, out, out_len, 1 );
-  //ret = wc_EccPublicKeyToDer( ecc, out, out_len, 0 );
 
   return Napi::Number::New( env, ret );
 }
