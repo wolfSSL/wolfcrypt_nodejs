@@ -19,8 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
 #include <napi.h>
-#include "wolfssl/options.h"
+#include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/settings.h>
+#include <wolfssl/wolfcrypt/error-crypt.h>
 #include <wolfssl/wolfcrypt/pkcs7.h>
 
 Napi::Number sizeof_PKCS7(const Napi::CallbackInfo& info);
@@ -32,4 +33,8 @@ Napi::Number bind_wc_PKCS7_AddCertificate(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_PKCS7_EncodeData(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_PKCS7_EncodeSignedData(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_PKCS7_VerifySignedData(const Napi::CallbackInfo& info);
+Napi::Number sizeof_wc_PKCS7_GetAttributeValue(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_PKCS7_GetAttributeValue(const Napi::CallbackInfo& info);
+Napi::Number sizeof_wc_PKCS7_GetSignerSID(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_PKCS7_GetSignerSID(const Napi::CallbackInfo& info);
 void bind_wc_PKCS7_Free(const Napi::CallbackInfo& info);

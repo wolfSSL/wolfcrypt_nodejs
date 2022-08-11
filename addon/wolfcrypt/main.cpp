@@ -123,6 +123,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_PKCS7_EncodeData"), Napi::Function::New(env, bind_wc_PKCS7_EncodeData));
   exports.Set(Napi::String::New(env, "wc_PKCS7_EncodeSignedData"), Napi::Function::New(env, bind_wc_PKCS7_EncodeSignedData));
   exports.Set(Napi::String::New(env, "wc_PKCS7_VerifySignedData"), Napi::Function::New(env, bind_wc_PKCS7_VerifySignedData));
+  exports.Set(Napi::String::New(env, "sizeof_wc_PKCS7_GetAttributeValue"), Napi::Function::New(env, sizeof_wc_PKCS7_GetAttributeValue));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_GetAttributeValue"), Napi::Function::New(env, bind_wc_PKCS7_GetAttributeValue));
+  exports.Set(Napi::String::New(env, "sizeof_wc_PKCS7_GetSignerSID"), Napi::Function::New(env, sizeof_wc_PKCS7_GetSignerSID));
+  exports.Set(Napi::String::New(env, "wc_PKCS7_GetSignerSID"), Napi::Function::New(env, bind_wc_PKCS7_GetSignerSID));
   exports.Set(Napi::String::New(env, "wc_PKCS7_Free"), Napi::Function::New(env, bind_wc_PKCS7_Free));
 
   return exports;

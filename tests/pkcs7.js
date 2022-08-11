@@ -47,8 +47,6 @@ const pkcs7_tests =
 
     const encoded = pkcs7.EncodeData( message, key )
 
-    console.log( encoded.toString() )
-
     pkcs7.free()
 
     console.log( 'PASS pkcs7 encodeData' )
@@ -64,11 +62,79 @@ const pkcs7_tests =
 
     const encoded = pkcs7.EncodeSignedData( message, key, 'RSA', 'SHA' )
 
-    console.log( encoded.toString() )
+    pkcs7.free()
+
+    pkcs7 = new WolfSSL_PKCS7()
+
+    pkcs7.VerifySignedData( encoded )
+
+    console.log( 'PASS pkcs7 signVerify' )
+  },
+
+  getAttribute: function()
+  {
+    const cert = fs.readFileSync( './client-cert.der' )
+    const key = fs.readFileSync( './client-key.der' )
+
+    let pkcs7 = new WolfSSL_PKCS7()
+    pkcs7.AddCertificate( cert )
+
+    const encoded = pkcs7.EncodeSignedData( message, key, 'RSA', 'SHA' )
 
     pkcs7.free()
 
-    console.log( 'PASS pkcs7 encodeData' )
+    pkcs7 = new WolfSSL_PKCS7()
+
+    pkcs7.VerifySignedData( encoded )
+
+    // oid identifier for data
+    const data = pkcs7.GetAttributeValue( Buffer.from( '2a864886f70d010904', 'hex' ) )
+
+    console.log( 'PASS pkcs7 getAttribute' )
+  },
+
+  getAttribute: function()
+  {
+    const cert = fs.readFileSync( './client-cert.der' )
+    const key = fs.readFileSync( './client-key.der' )
+
+    let pkcs7 = new WolfSSL_PKCS7()
+    pkcs7.AddCertificate( cert )
+
+    const encoded = pkcs7.EncodeSignedData( message, key, 'RSA', 'SHA' )
+
+    pkcs7.free()
+
+    pkcs7 = new WolfSSL_PKCS7()
+
+    pkcs7.VerifySignedData( encoded )
+
+    // oid identifier for data
+    const data = pkcs7.GetAttributeValue( Buffer.from( '2a864886f70d010904', 'hex' ) )
+
+    console.log( 'PASS pkcs7 getAttribute' )
+  },
+
+  getSid: function()
+  {
+    const cert = fs.readFileSync( './client-cert.der' )
+    const key = fs.readFileSync( './client-key.der' )
+
+    let pkcs7 = new WolfSSL_PKCS7()
+    pkcs7.AddCertificate( cert )
+
+    const encoded = pkcs7.EncodeSignedData( message, key, 'RSA', 'SHA' )
+
+    pkcs7.free()
+
+    pkcs7 = new WolfSSL_PKCS7()
+
+    pkcs7.VerifySignedData( encoded )
+
+    // oid identifier for data
+    const data = pkcs7.GetSignerSID()
+
+    console.log( 'PASS pkcs7 getSid' )
   },
 }
 

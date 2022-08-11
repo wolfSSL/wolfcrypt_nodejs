@@ -223,11 +223,19 @@ Napi::Number bind_wc_PKCS7_EncodeSignedData(const Napi::CallbackInfo& info)
 
   wc_InitRng( &rng );
 
+  ret = wc_PKCS7_SetSignerIdentifierType( pkcs7, CMS_SKID );
+
+  if ( ret != 0 )
+  {
+    return Napi::Number::New( env, ret );
+  }
+
   pkcs7->content = data;
   pkcs7->contentSz = data_size;
   pkcs7->privateKey = key;
   pkcs7->privateKeySz = key_size;
   pkcs7->encryptOID = key_sum;
+  pkcs7->publicKeyOID = key_sum;
   pkcs7->hashOID = hash_sum;
   pkcs7->rng = &rng;
 
@@ -249,6 +257,80 @@ Napi::Number bind_wc_PKCS7_VerifySignedData(const Napi::CallbackInfo& info)
   ret = wc_PKCS7_VerifySignedData( pkcs7, in, in_size );
 
   return Napi::Number::New( env, ret );
+}
+
+Napi::Number sizeof_wc_PKCS7_GetAttributeValue(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  PKCS7* pkcs7 = (PKCS7*)( info[0].As<Napi::Uint8Array>().Data() );
+  uint8_t* oid = info[1].As<Napi::Uint8Array>().Data();
+  unsigned int oid_size = info[2].As<Napi::Number>().Int32Value();
+  unsigned int out_size;
+
+  ret = wc_PKCS7_GetAttributeValue( pkcs7, oid, oid_size, NULL, &out_size );
+
+  if ( ret != LENGTH_ONLY_E )
+  {
+    return Napi::Number::New( env, ret );
+  }
+
+  return Napi::Number::New( env, out_size );
+}
+
+Napi::Number bind_wc_PKCS7_GetAttributeValue(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  PKCS7* pkcs7 = (PKCS7*)( info[0].As<Napi::Uint8Array>().Data() );
+  uint8_t* oid = info[1].As<Napi::Uint8Array>().Data();
+  unsigned int oid_size = info[2].As<Napi::Number>().Int32Value();
+  uint8_t* out = info[3].As<Napi::Uint8Array>().Data();
+  unsigned int out_size = info[4].As<Napi::Number>().Int32Value();
+
+  ret = wc_PKCS7_GetAttributeValue( pkcs7, oid, oid_size, out, &out_size );
+
+  if ( ret < 0 )
+  {
+    return Napi::Number::New( env, ret );
+  }
+
+  return Napi::Number::New( env, out_size );
+}
+
+Napi::Number sizeof_wc_PKCS7_GetSignerSID(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  PKCS7* pkcs7 = (PKCS7*)( info[0].As<Napi::Uint8Array>().Data() );
+  unsigned int out_size;
+
+  ret = wc_PKCS7_GetSignerSID( pkcs7, NULL, &out_size );
+
+  if ( ret != LENGTH_ONLY_E )
+  {
+    return Napi::Number::New( env, ret );
+  }
+
+  return Napi::Number::New( env, out_size );
+}
+
+Napi::Number bind_wc_PKCS7_GetSignerSID(const Napi::CallbackInfo& info)
+{
+  int ret;
+  Napi::Env env = info.Env();
+  PKCS7* pkcs7 = (PKCS7*)( info[0].As<Napi::Uint8Array>().Data() );
+  uint8_t* out = info[1].As<Napi::Uint8Array>().Data();
+  unsigned int out_size = info[2].As<Napi::Number>().Int32Value();
+
+  ret = wc_PKCS7_GetSignerSID( pkcs7, out, &out_size );
+
+  if ( ret < 0 )
+  {
+    return Napi::Number::New( env, ret );
+  }
+
+  return Napi::Number::New( env, out_size );
 }
 
 void bind_wc_PKCS7_Free(const Napi::CallbackInfo& info)

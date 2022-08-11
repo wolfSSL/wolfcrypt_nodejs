@@ -130,7 +130,7 @@ class WolfSSL_PKCS7
 
     let ret = wolfcrypt.wc_PKCS7_EncodeSignedData( this.pkcs7, data, data.length, key, key.length, keySumType, hashSumType, outBuf, outBuf.length )
 
-    if ( ret != 0 )
+    if ( ret <= 0 )
     {
       throw `Failed to wc_PKCS7_EncodeSignedData ${ ret }`
     }
@@ -158,6 +158,54 @@ class WolfSSL_PKCS7
     {
       throw `Failed to wc_PKCS7_VerifySignedData ${ ret }`
     }
+  }
+
+  GetAttributeValue( oid )
+  {
+    if ( this.pkcs7 == null )
+    {
+      throw 'Pkcs7 not allocated'
+    }
+
+    if ( typeof oid == 'string' )
+    {
+      oid = Buffer.from( oid )
+    }
+
+    if ( !Buffer.isBuffer( oid ) )
+    {
+      throw `oid must be a Buffer or string`
+    }
+
+    let outBuf = Buffer.alloc( wolfcrypt.sizeof_wc_PKCS7_GetAttributeValue( this.pkcs7, oid, oid.length ) )
+
+    let ret = wolfcrypt.wc_PKCS7_GetAttributeValue(  this.pkcs7, oid, oid.length, outBuf, outBuf.length )
+
+    if ( ret <= 0 )
+    {
+      throw `Failed to wc_PKCS7_GetAttributeValue ${ ret }`
+    }
+
+    return outBuf
+  }
+
+  GetSignerSID()
+  {
+    if ( this.pkcs7 == null )
+    {
+      throw 'Pkcs7 not allocated'
+    }
+
+    let outBuf = Buffer.alloc( wolfcrypt.sizeof_wc_PKCS7_GetSignerSID( this.pkcs7 ) )
+
+    let ret = wolfcrypt.wc_PKCS7_GetSignerSID( this.pkcs7, outBuf, outBuf.length )
+
+    if ( ret <= 0 )
+    {
+      throw `Failed to wc_PKCS7_GetSignerSID ${ ret }`
+    }
+
+    return outBuf
   }
 
   free()
