@@ -51,8 +51,9 @@ Napi::Number bind_wc_ecc_init(const Napi::CallbackInfo& info)
   Napi::Env env = info.Env();
   ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
 
-  ecc->rng = NULL;
   ret = wc_ecc_init( ecc );
+
+  ecc->rng = wc_rng_new( NULL, 0, NULL );
 
   return Napi::Number::New( env, ret );
 }
@@ -63,8 +64,6 @@ Napi::Number bind_wc_ecc_make_key(const Napi::CallbackInfo& info)
   int ret;
   int key_size = info[0].As<Napi::Number>().Int32Value();
   ecc_key* ecc = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
-
-  ecc->rng = wc_rng_new( NULL, 0, NULL );
 
   ret = wc_ecc_make_key( ecc->rng, key_size, ecc );
 
@@ -109,6 +108,84 @@ Napi::Number bind_wc_ecc_import_x963(const Napi::CallbackInfo& info)
   ecc_key* ecc = (ecc_key*)( info[2].As<Napi::Uint8Array>().Data() );
 
   ret = wc_ecc_import_x963( in, in_len, ecc );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_EccKeyDerSize(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  int ret;
+  ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
+  int pub = info[1].As<Napi::Number>().Int32Value();
+
+  ret = wc_EccKeyDerSize( ecc, pub );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_EccPublicKeyDerSize(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  int ret;
+  ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
+
+  ret = wc_EccPublicKeyDerSize( ecc, 1 );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_EccPublicKeyToDer(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  int ret;
+  ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
+  uint8_t* out = (uint8_t*)( info[1].As<Napi::Uint8Array>().Data() );
+  unsigned int out_len = info[2].As<Napi::Number>().Int32Value();
+
+  /* 1=export with ASN.1/DER header (which includes curve info) */
+  ret = wc_EccPublicKeyToDer( ecc, out, out_len, 1 );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_EccPublicKeyDecode(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  int ret;
+  uint8_t* in = (uint8_t*)( info[0].As<Napi::Uint8Array>().Data() );
+  ecc_key* ecc = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
+  unsigned int in_len = info[2].As<Napi::Number>().Int32Value();
+  unsigned int idx = 0;
+
+  ret = wc_EccPublicKeyDecode( in, &idx, ecc, in_len );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_EccPrivateKeyToDer(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  int ret;
+  ecc_key* ecc = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
+  uint8_t* out = (uint8_t*)( info[1].As<Napi::Uint8Array>().Data() );
+  unsigned int out_len = info[2].As<Napi::Number>().Int32Value();
+
+  ret = wc_EccPrivateKeyToDer( ecc, out, out_len );
+
+  return Napi::Number::New( env, ret );
+}
+
+Napi::Number bind_wc_EccPrivateKeyDecode(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  int ret;
+  uint8_t* in = (uint8_t*)( info[0].As<Napi::Uint8Array>().Data() );
+  ecc_key* ecc = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
+  unsigned int in_len = info[2].As<Napi::Number>().Int32Value();
+  unsigned int idx = 0;
+
+  ret = wc_EccPrivateKeyDecode( in, &idx, ecc, in_len );
 
   return Napi::Number::New( env, ret );
 }
@@ -160,18 +237,13 @@ Napi::Number bind_wc_ecc_sign_hash(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
   int ret;
-  WC_RNG rng;
   uint8_t* in = (uint8_t*)( info[0].As<Napi::Uint8Array>().Data() );
   int in_len = info[1].As<Napi::Number>().Int32Value();
   uint8_t* out = (uint8_t*)( info[2].As<Napi::Uint8Array>().Data() );
   unsigned int out_len = info[3].As<Napi::Number>().Int32Value();
   ecc_key* ecc = (ecc_key*)( info[4].As<Napi::Uint8Array>().Data() );
 
-  ret = wc_InitRng( &rng );
-  if (ret == 0)
-  {
-    ret = wc_ecc_sign_hash( in, in_len, out, &out_len, &rng, ecc );
-  }
+  ret = wc_ecc_sign_hash( in, in_len, out, &out_len, ecc->rng, ecc );
 
   if ( ret < 0 )
   {

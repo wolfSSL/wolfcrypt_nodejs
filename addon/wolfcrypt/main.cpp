@@ -26,6 +26,7 @@
 #include "./h/rsa.h"
 #include "./h/sha.h"
 #include "./h/ecc.h"
+#include "./h/pbkdf2.h"
 #include "./h/pkcs7.h"
 
 using namespace Napi;
@@ -107,12 +108,20 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "sizeof_ecc_x963"), Napi::Function::New(env, sizeof_ecc_x963));
   exports.Set(Napi::String::New(env, "wc_ecc_export_x963"), Napi::Function::New(env, bind_wc_ecc_export_x963));
   exports.Set(Napi::String::New(env, "wc_ecc_import_x963"), Napi::Function::New(env, bind_wc_ecc_import_x963));
+  exports.Set(Napi::String::New(env, "wc_EccKeyDerSize"), Napi::Function::New(env, bind_wc_EccKeyDerSize));
+  exports.Set(Napi::String::New(env, "wc_EccPublicKeyToDer"), Napi::Function::New(env, bind_wc_EccPublicKeyToDer));
+  exports.Set(Napi::String::New(env, "wc_EccPublicKeyDecode"), Napi::Function::New(env, bind_wc_EccPublicKeyDecode));
+  exports.Set(Napi::String::New(env, "wc_EccPublicKeyDerSize"), Napi::Function::New(env, bind_wc_EccPublicKeyDerSize));
+  exports.Set(Napi::String::New(env, "wc_EccPrivateKeyToDer"), Napi::Function::New(env, bind_wc_EccPrivateKeyToDer));
+  exports.Set(Napi::String::New(env, "wc_EccPrivateKeyDecode"), Napi::Function::New(env, bind_wc_EccPrivateKeyDecode));
   exports.Set(Napi::String::New(env, "wc_ecc_set_curve"), Napi::Function::New(env, bind_wc_ecc_set_curve));
   exports.Set(Napi::String::New(env, "wc_ecc_shared_secret"), Napi::Function::New(env, bind_wc_ecc_shared_secret));
   exports.Set(Napi::String::New(env, "wc_ecc_sig_size"), Napi::Function::New(env, bind_wc_ecc_sig_size));
   exports.Set(Napi::String::New(env, "wc_ecc_sign_hash"), Napi::Function::New(env, bind_wc_ecc_sign_hash));
   exports.Set(Napi::String::New(env, "wc_ecc_verify_hash"), Napi::Function::New(env, bind_wc_ecc_verify_hash));
   exports.Set(Napi::String::New(env, "wc_ecc_free"), Napi::Function::New(env, bind_wc_ecc_free));
+
+  exports.Set(Napi::String::New(env, "wc_PBKDF2"), Napi::Function::New(env, bind_wc_PBKDF2));
 
   exports.Set(Napi::String::New(env, "sizeof_PKCS7"), Napi::Function::New(env, sizeof_PKCS7));
   exports.Set(Napi::String::New(env, "typeof_Key_Sum"), Napi::Function::New(env, typeof_Key_Sum));

@@ -58,5 +58,7 @@ PASS ecc makeKey
 PASS ecc sharedSecret32
 PASS ecc sharedSecret64
 PASS ecc signVerify
-PASS ecc importExport
+PASS ecc importExportx963
+PASS ecc importExportDer
+PASS pbkdf2
 ```

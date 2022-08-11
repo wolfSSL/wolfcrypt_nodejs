@@ -10,6 +10,7 @@
             "addon/wolfcrypt/rsa.cpp",
             "addon/wolfcrypt/sha.cpp",
             "addon/wolfcrypt/ecc.cpp",
+            "addon/wolfcrypt/pbkdf2.cpp",
             "addon/wolfcrypt/pkcs7.cpp"
         ],
         'include_dirs': [
