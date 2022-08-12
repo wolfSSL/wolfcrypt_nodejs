@@ -65,14 +65,6 @@ Napi::Number typeof_Key_Sum(const Napi::CallbackInfo& info)
   {
     ret = DHk;
   }
-  else if ( strcmp( type.c_str(), "FALCON_LEVEL1" ) == 0 )
-  {
-    ret = FALCON_LEVEL1k;
-  }
-  else if ( strcmp( type.c_str(), "FALCON_LEVEL5" ) == 0 )
-  {
-    ret = FALCON_LEVEL5k;
-  }
 
   return Napi::Number::New( env, ret );
 }
