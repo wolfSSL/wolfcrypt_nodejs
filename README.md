@@ -61,4 +61,9 @@ PASS ecc signVerify
 PASS ecc importExportx963
 PASS ecc importExportDer
 PASS pbkdf2
+PASS pkcs7 addCertificate
+PASS pkcs7 encodeData
+PASS pkcs7 signVerify
+PASS pkcs7 getAttribute
+PASS pkcs7 getSid
 ```
