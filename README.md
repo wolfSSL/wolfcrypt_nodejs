@@ -25,13 +25,13 @@ Verify the .so (shared object) path and version in `binding.gyp`:
 Use npm to install the package:
 
 ```
-npm i wolfcrypt_binding
+npm i wolfcrypt
 ```
 
 Then require it in your application code
 
 ```
-const { wolfcrypt, WolfSSLEncryptionStream } = require( 'wolfcrypt_binding' )
+const { wolfcrypt, WolfSSLEncryptionStream } = require( 'wolfcrypt' )
 ```
 
 Examples of how to use this library can be found in the tests directory
