@@ -1,4 +1,4 @@
-/* app.js
+/* test.js
  *
  * Copyright (C) 2006-2022 wolfSSL Inc.
  *
