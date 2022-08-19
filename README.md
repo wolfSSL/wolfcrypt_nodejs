@@ -22,25 +22,16 @@ Verify the .so (shared object) path and version in `binding.gyp`:
 
 ## Package Installation
 
-Use npm to install and build:
+Use npm to install the package:
 
 ```
-npm i
-npm run build
+npm i wolfcrypt_binding
 ```
 
-Place the package into your projects `node_modules` folder and require it:
+Then require it in your application code
 
 ```
-mv wolfcrypt_nodejs my_project/node_modules
-...
-const { wolfcrypt, WolfSSLEncryptionStream } = require( 'wolfcrypt_nodejs' )
-```
-
-Alternatively you can require the module by specifying a path to it
-
-```
-const { wolfcrypt, WolfSSLEncryptionStream } = require( 'path-to-library/wolfcrypt_nodejs' )
+const { wolfcrypt, WolfSSLEncryptionStream } = require( 'wolfcrypt_binding' )
 ```
 
 Examples of how to use this library can be found in the tests directory
