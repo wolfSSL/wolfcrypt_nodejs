@@ -25,7 +25,7 @@ const message = 'Hello WolfSSL!'
 
 const pkcs7_tests =
 {
-  addCertificate: function()
+  pkcs7_addCertificate: function()
   {
     const cert = fs.readFileSync( './client-cert.der' )
 
@@ -37,7 +37,7 @@ const pkcs7_tests =
     console.log( 'PASS pkcs7 addCertificate' )
   },
 
-  encodeData: function()
+  pkcs7_encodeData: function()
   {
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )
@@ -52,7 +52,7 @@ const pkcs7_tests =
     console.log( 'PASS pkcs7 encodeData' )
   },
 
-  signVerify: function()
+  pkcs7_signVerify: function()
   {
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )
@@ -71,7 +71,7 @@ const pkcs7_tests =
     console.log( 'PASS pkcs7 signVerify' )
   },
 
-  getAttribute: function()
+  pkcs7_getAttribute: function()
   {
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )
@@ -93,29 +93,7 @@ const pkcs7_tests =
     console.log( 'PASS pkcs7 getAttribute' )
   },
 
-  getAttribute: function()
-  {
-    const cert = fs.readFileSync( './client-cert.der' )
-    const key = fs.readFileSync( './client-key.der' )
-
-    let pkcs7 = new WolfSSL_PKCS7()
-    pkcs7.AddCertificate( cert )
-
-    const encoded = pkcs7.EncodeSignedData( message, key, 'RSA', 'SHA' )
-
-    pkcs7.free()
-
-    pkcs7 = new WolfSSL_PKCS7()
-
-    pkcs7.VerifySignedData( encoded )
-
-    // oid identifier for data
-    const data = pkcs7.GetAttributeValue( Buffer.from( '2a864886f70d010904', 'hex' ) )
-
-    console.log( 'PASS pkcs7 getAttribute' )
-  },
-
-  getSid: function()
+  pkcs7_getSid: function()
   {
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )

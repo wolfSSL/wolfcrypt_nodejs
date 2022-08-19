@@ -25,7 +25,7 @@ const message16 = '1234567890123456'
 
 const ecc_tests =
 {
-  makeKey: function()
+  ecc_makeKey: function()
   {
     let ecc = new WolfSSLEcc()
 
@@ -36,7 +36,7 @@ const ecc_tests =
     console.log( 'PASS ecc makeKey' )
   },
 
-  sharedSecret32: function()
+  ecc_sharedSecret32: function()
   {
     let ecc0 = new WolfSSLEcc()
     let ecc1 = new WolfSSLEcc()
@@ -60,7 +60,7 @@ const ecc_tests =
     }
   },
 
-  sharedSecret64: function()
+  ecc_sharedSecret64: function()
   {
     let ecc0 = new WolfSSLEcc()
     let ecc1 = new WolfSSLEcc()
@@ -84,7 +84,7 @@ const ecc_tests =
     }
   },
 
-  signVerify: function()
+  ecc_signVerify: function()
   {
     let ecc0 = new WolfSSLEcc()
 
@@ -104,7 +104,7 @@ const ecc_tests =
     ecc0.free()
   },
 
-  importExportx963: function()
+  ecc_importExportx963: function()
   {
     let ecc0 = new WolfSSLEcc()
     let ecc1 = new WolfSSLEcc()
@@ -130,7 +130,7 @@ const ecc_tests =
     ecc1.free()
   },
 
-  importExportDer: function()
+  ecc_importExportDer: function()
   {
     let ecc0 = new WolfSSLEcc()
     let ecc1 = new WolfSSLEcc()

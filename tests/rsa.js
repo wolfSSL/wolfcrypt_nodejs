@@ -28,7 +28,7 @@ const message = '\ntesttesttest\n'
 
 const rsa_tests =
 {
-  keyToDer: function()
+  rsa_keyToDer: function()
   {
     let rsa = new WolfSSLRsa()
 
@@ -41,7 +41,7 @@ const rsa_tests =
     console.log( 'PASS rsa keyToDer' )
   },
 
-  keyToPublicDer: function()
+  rsa_keyToPublicDer: function()
   {
     let rsa = new WolfSSLRsa()
 
@@ -54,7 +54,7 @@ const rsa_tests =
     console.log( 'PASS rsa keyToPublicDer' )
   },
 
-  privateKeyDecode: function()
+  rsa_privateKeyDecode: function()
   {
     let rsa = new WolfSSLRsa()
 
@@ -74,7 +74,7 @@ const rsa_tests =
     }
   },
 
-  publicKeyDecode: function()
+  rsa_publicKeyDecode: function()
   {
     let rsa = new WolfSSLRsa()
 
@@ -92,7 +92,7 @@ const rsa_tests =
     rsa.free()
   },
 
-  encryptDecrypt: function()
+  rsa_encryptDecrypt: function()
   {
     let rsa = new WolfSSLRsa()
 
@@ -113,7 +113,7 @@ const rsa_tests =
     }
   },
 
-  signVerify: function()
+  rsa_signVerify: function()
   {
     let rsa = new WolfSSLRsa()
 

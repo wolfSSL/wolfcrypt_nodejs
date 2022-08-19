@@ -1,6 +1,6 @@
 # wolfCrypt Node.JS support
 
-Wrappers for wolfCrypt ciphers.
+Wrappers for various wolfCrypt functions.
 
 ## Building wolfSSL
 
@@ -20,18 +20,32 @@ Verify the .so (shared object) path and version in `binding.gyp`:
         ],
 ```
 
-Use npm to install and build:
+## Package Installation
+
+Use npm to install the package:
 
 ```
-npm i
-npm run build
-node app.js
+npm i wolfcrypt_binding
 ```
 
-## Example Output
+Then require it in your application code
 
 ```
-$ node app.js
+const { wolfcrypt, WolfSSLEncryptionStream } = require( 'wolfcrypt_binding' )
+```
+
+Examples of how to use this library can be found in the tests directory
+
+## Tests Output
+
+```
+$ npm run test
+PASS ecc makeKey
+PASS ecc sharedSecret32
+PASS ecc sharedSecret64
+PASS ecc signVerify
+PASS ecc importExportx963
+PASS ecc importExportDer
 PASS evp encrypt
 PASS evp decrypt
 PASS evp encrypt_decrypt_odd
@@ -41,6 +55,12 @@ PASS evp encryptDecryptPipes
 PASS hmac hmac
 PASS hmac hmacStream
 PASS hmac hmacPipe
+PASS pbkdf2
+PASS pkcs7 addCertificate
+PASS pkcs7 encodeData
+PASS pkcs7 signVerify
+PASS pkcs7 getAttribute
+PASS pkcs7 getSid
 PASS rsa keyToDer
 PASS rsa keyToPublicDer
 PASS rsa privateKeyDecode
@@ -54,16 +74,4 @@ PASS sha sha384
 PASS sha sha512
 PASS sha sha512_224
 PASS sha sha512_256
-PASS ecc makeKey
-PASS ecc sharedSecret32
-PASS ecc sharedSecret64
-PASS ecc signVerify
-PASS ecc importExportx963
-PASS ecc importExportDer
-PASS pbkdf2
-PASS pkcs7 addCertificate
-PASS pkcs7 encodeData
-PASS pkcs7 signVerify
-PASS pkcs7 getAttribute
-PASS pkcs7 getSid
 ```

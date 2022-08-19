@@ -2,11 +2,10 @@
   "name": "wolfcrypt_binding",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "gypfile": true,
   "scripts": {
-    "run": "node app.js",
-    "tsrun": "npx tsc main.ts && node main.js",
+    "test": "node test.js",
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean"
   },
@@ -14,8 +13,7 @@
   "license": "GPL-2.0",
   "devDependencies": {
     "@types/node": "^18.0.6",
-    "node-gyp": "^9.1.0",
-    "typescript": "^4.7.4"
+    "node-gyp": "^9.1.0"
   },
   "dependencies": {
     "node-addon-api": "^5.0.0"
