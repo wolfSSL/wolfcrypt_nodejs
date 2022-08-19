@@ -125,21 +125,21 @@ class WolfSSLEVP
    *
    * @throws {Error} If the evp pointer is set to null
    *
+   * @throws {Error} If the evp pointer is set to null
+   *
    * @remarks This function should be called if the caller
    * no longer wants to use the cipher, update and finalize
    * will throw errors if free has been called
    */
   free()
   {
-    if ( this.evp != null )
-    {
-      wolfcrypt.EVP_CIPHER_CTX_free( this.evp )
-      this.evp = null
-    }
-    else
+    if ( this.evp == null )
     {
       throw 'Cipher is not allocated'
     }
+
+    wolfcrypt.EVP_CIPHER_CTX_free( this.evp )
+    this.evp = null
   }
 }
 

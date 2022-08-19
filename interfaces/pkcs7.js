@@ -22,6 +22,11 @@ const wolfcrypt = require( '../build/Release/wolfcrypt' )
 
 class WolfSSL_PKCS7
 {
+  /**
+   * Creates a new PKCS7 structure by calling sizeof_PKCS7 and wc_PKCS7_Init
+   *
+   * @remarks free must be called to free the ecc PKCS7 data
+   */
   constructor()
   {
     this.pkcs7 = Buffer.alloc( wolfcrypt.sizeof_PKCS7() )
@@ -34,6 +39,17 @@ class WolfSSL_PKCS7
     }
   }
 
+  /**
+   * Adds a certificate to the PKCS7 structure
+   *
+   * @param cert The cert to add.
+   *
+   * @throws {Error} If the PKCS7 structure is not allocated.
+   *
+   * @throws {Error} If the cert is not a Buffer.
+   *
+   * @throws {Error} If wc_PKCS7_AddCertificate fails.
+   */
   AddCertificate( cert )
   {
     if ( this.pkcs7 == null )
@@ -54,6 +70,23 @@ class WolfSSL_PKCS7
     }
   }
 
+  /**
+   * Encodes the provided data using the provided key
+   *
+   * @param data The data to encode.
+   *
+   * @param key The key to use, as a Buffer.
+   *
+   * @returns The encoded data Buffer.
+   *
+   * @throws {Error} If the PKCS7 structure is not allocated.
+   *
+   * @throws {Error} If the data is not a string or Buffer.
+   *
+   * @throws {Error} If the key is not a Buffer.
+   *
+   * @throws {Error} If wc_PKCS7_EncodeData fails.
+   */
   EncodeData( data, key )
   {
     if ( this.pkcs7 == null )
@@ -90,6 +123,29 @@ class WolfSSL_PKCS7
     return outBuf
   }
 
+  /**
+   * Encodes and signs the provided data using the provided key, keySum and hashSum
+   *
+   * @param data The data to encode and sign.
+   *
+   * @param key The key to use, as a Buffer.
+   *
+   * @param keySum The key algorithm to use, RSA, ECDSA, ED25519, etc.
+   *
+   * @param keySum The hash algorithm to use, MD5, SHA, SHAKE256, etc.
+   *
+   * @returns The signed data Buffer.
+   *
+   * @throws {Error} If the PKCS7 structure is not allocated.
+   *
+   * @throws {Error} If the data is not a string or Buffer.
+   *
+   * @throws {Error} If the key is not a Buffer.
+   *
+   * @throws {Error} If keySum or hashSum are invalid.
+   *
+   * @throws {Error} If wc_PKCS7_EncodeSignedData fails.
+   */
   EncodeSignedData( data, key, keySum, hashSum )
   {
     if ( this.pkcs7 == null )
@@ -140,6 +196,17 @@ class WolfSSL_PKCS7
     return outBuf
   }
 
+  /**
+   * Verifies a signed data Buffer and loads it into the PKCS7 struct
+   *
+   * @param data The signed data to verify.
+   *
+   * @throws {Error} If the PKCS7 structure is not allocated.
+   *
+   * @throws {Error} If the data is not a Buffer.
+   *
+   * @throws {Error} If wc_PKCS7_VerifySignedData fails.
+   */
   VerifySignedData( data )
   {
     if ( this.pkcs7 == null )
@@ -160,6 +227,19 @@ class WolfSSL_PKCS7
     }
   }
 
+  /**
+   * Retreives an attribute from the PKCS7 structure by its oid
+   *
+   * @param oid The oid of the desired attribute.
+   *
+   * @returns The attribute value as a Buffer.
+   *
+   * @throws {Error} If the PKCS7 structure is not allocated.
+   *
+   * @throws {Error} If the oid is not a string or Buffer.
+   *
+   * @throws {Error} If wc_PKCS7_GetAttributeValue fails.
+   */
   GetAttributeValue( oid )
   {
     if ( this.pkcs7 == null )
@@ -189,6 +269,15 @@ class WolfSSL_PKCS7
     return outBuf
   }
 
+  /**
+   * Retreives the SID from the PKCS7 structure
+   *
+   * @returns The SID value as a Buffer.
+   *
+   * @throws {Error} If the PKCS7 structure is not allocated.
+   *
+   * @throws {Error} If wc_PKCS7_GetSignerSID fails.
+   */
   GetSignerSID()
   {
     if ( this.pkcs7 == null )
@@ -208,9 +297,22 @@ class WolfSSL_PKCS7
     return outBuf
   }
 
+  /**
+   * Frees the data allocated by the PKCS7 structure
+   *
+   * @throws {Error} If PKCS7 structure is not allocated.
+   *
+   * @throws {Error} If wc_ecc_free fails.
+   */
   free()
   {
+    if ( this.pkcs7 == null )
+    {
+      throw 'Pkcs7 not allocated'
+    }
+
     wolfcrypt.wc_PKCS7_Free( this.pkcs7 )
+
     this.pkcs7 = null
   }
 }

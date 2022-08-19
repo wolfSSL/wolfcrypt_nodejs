@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
 
-const { WolfSSL_PBDKF2 } = require( '../interfaces/pbkdf2' )
+const { WolfSSL_PBKDF2 } = require( '../interfaces/pbkdf2' )
 
 const pbkdf2_tests = 
 {
@@ -28,8 +28,8 @@ const pbkdf2_tests =
     const password = Buffer.from( 'super secret password' )
     const salt = Buffer.from( 'super secret salt' )
 
-    const key1 = WolfSSL_PBDKF2( password, salt, 2048, 64, 'SHA512' )
-    const key2 = WolfSSL_PBDKF2( password, salt, 2048, 64, 'SHA512' )
+    const key1 = WolfSSL_PBKDF2( password, salt, 2048, 64, 'SHA512' )
+    const key2 = WolfSSL_PBKDF2( password, salt, 2048, 64, 'SHA512' )
 
     if ( key1.toString( 'hex' ) == key2.toString( 'hex' ) )
     {

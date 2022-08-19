@@ -109,21 +109,22 @@ class WolfSSLHmac
    *
    * @throws {Error} If the hmac pointer is set to null
    *
+   * @throws {Error} If wc_HmacFree fails
+   *
    * @remarks This function should be called if the caller
    * no longer wants to use the hmac, update and finalize
    * will throw errors if free has been called
    */
   free()
   {
-    if ( this.hmac != null )
-    {
-      wolfcrypt.wc_HmacFree( this.hmac )
-      this.hmac = null
-    }
-    else
+    if ( this.hmac == null )
     {
       throw 'Hmac is not allocated'
     }
+
+    wolfcrypt.wc_HmacFree( this.hmac );
+
+    this.hmac = null
   }
 }
 
