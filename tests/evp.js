@@ -32,7 +32,7 @@ const expectedMessage = 'Hello WolfSSL!\n'
 
 const evp_tests =
 {
-  encrypt: function()
+  evp_encrypt: function()
   {
     let encrypt = new WolfSSLEncryptor( 'AES-256-CBC', key, iv )
 
@@ -51,7 +51,7 @@ const evp_tests =
     }
   },
 
-  decrypt: function()
+  evp_decrypt: function()
   {
     let decrypt = new WolfSSLDecryptor( 'AES-256-CBC', key, iv )
 
@@ -70,7 +70,7 @@ const evp_tests =
     }
   },
 
-  encryptDecryptOdd: function()
+  evp_encryptDecryptOdd: function()
   {
     let parts = []
     let encrypt = new WolfSSLEncryptor( 'AES-256-CBC', key, iv )
@@ -106,7 +106,7 @@ const evp_tests =
     }
   },
 
-  encryptionStream: async function()
+  evp_encryptionStream: async function()
   {
     await new Promise( (res, rej) => {
       let parts = []
@@ -140,7 +140,7 @@ const evp_tests =
     } )
   },
 
-  decryptionStream: async function()
+  evp_decryptionStream: async function()
   {
     await new Promise( (res, rej) => {
       let parts = []
@@ -171,7 +171,7 @@ const evp_tests =
     } )
   },
 
-  encryptDecryptPipes: async function()
+  evp_encryptDecryptPipes: async function()
   {
     await new Promise( (res, rej) => {
       let parts = []
