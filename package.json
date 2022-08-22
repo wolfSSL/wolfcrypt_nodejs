@@ -1,6 +1,6 @@
 {
   "name": "wolfcrypt",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "nodejs bindings for wolfcrypt C functions",
   "main": "index.js",
   "gypfile": true,
