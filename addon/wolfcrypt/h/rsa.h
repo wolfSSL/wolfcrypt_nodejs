@@ -28,6 +28,7 @@ Napi::Number sizeof_RsaKey(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_RsaEncryptSize(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_InitRsaKey(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_MakeRsaKey(const Napi::CallbackInfo& info);
+Napi::Value wc_MakeRsaKey_async(const Napi::CallbackInfo& info);
 Napi::Number RsaPrivateDerSize(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_RsaKeyToDer(const Napi::CallbackInfo& info);
 Napi::Number RsaPublicDerSize(const Napi::CallbackInfo& info);

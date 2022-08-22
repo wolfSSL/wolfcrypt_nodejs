@@ -51,6 +51,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_RsaEncryptSize"), Napi::Function::New(env, bind_wc_RsaEncryptSize));
   exports.Set(Napi::String::New(env, "wc_InitRsaKey"), Napi::Function::New(env, bind_wc_InitRsaKey));
   exports.Set(Napi::String::New(env, "wc_MakeRsaKey"), Napi::Function::New(env, bind_wc_MakeRsaKey));
+  exports.Set(Napi::String::New(env, "wc_MakeRsaKey_async"), Napi::Function::New(env, wc_MakeRsaKey_async));
   exports.Set(Napi::String::New(env, "RsaPrivateDerSize"), Napi::Function::New(env, RsaPrivateDerSize));
   exports.Set(Napi::String::New(env, "wc_RsaKeyToDer"), Napi::Function::New(env, bind_wc_RsaKeyToDer));
   exports.Set(Napi::String::New(env, "RsaPublicDerSize"), Napi::Function::New(env, RsaPublicDerSize));
@@ -105,6 +106,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_ecc_size"), Napi::Function::New(env, bind_wc_ecc_size));
   exports.Set(Napi::String::New(env, "wc_ecc_init"), Napi::Function::New(env, bind_wc_ecc_init));
   exports.Set(Napi::String::New(env, "wc_ecc_make_key"), Napi::Function::New(env, bind_wc_ecc_make_key));
+  exports.Set(Napi::String::New(env, "wc_ecc_make_key_async"), Napi::Function::New(env, wc_ecc_make_key_async));
   exports.Set(Napi::String::New(env, "sizeof_ecc_x963"), Napi::Function::New(env, sizeof_ecc_x963));
   exports.Set(Napi::String::New(env, "wc_ecc_export_x963"), Napi::Function::New(env, bind_wc_ecc_export_x963));
   exports.Set(Napi::String::New(env, "wc_ecc_import_x963"), Napi::Function::New(env, bind_wc_ecc_import_x963));

@@ -60,6 +60,62 @@ class WolfSSLRsa
   }
 
   /**
+   * Makes a new rsa key and fills the rsa struct with the key data, uses callback
+   *
+   * @param size The size of the rsa key.
+   *
+   * @param e The exponent parameter to use for key generation.
+   *
+   * @param cb The callback function that will be called upon error or the key completion.
+   *
+   * @throws {Error} If the rsa key is not allocated.
+   */
+  MakeRsaKey_cb( size, e, cb )
+  {
+    if ( this.rsa == null )
+    {
+      throw 'Invalid rsa key'
+    }
+
+    wolfcrypt.wc_MakeRsaKey_async( this.rsa, size, e, cb )
+  }
+
+  /**
+   * Makes a new rsa key and fills the rsa struct with the key data, uses promise
+   *
+   * @param size The size of the rsa key.
+   *
+   * @param e The exponent parameter to use for key generation.
+   *
+   * @returns A promise that will resolve when the key is finished or reject when it fails.
+   *
+   * @throws {Error} If the rsa key is not allocated.
+   */
+  MakeRsaKey_promise( size, e )
+  {
+    if ( this.rsa == null )
+    {
+      throw 'Invalid rsa key'
+    }
+
+    return new Promise( ( res, rej ) => {
+      wolfcrypt.wc_MakeRsaKey_async( this.rsa, size, e, ( err, ret ) => {
+        if ( err )
+        {
+          return rej( err )
+        }
+
+        if ( ret != 0 )
+        {
+          return rej( ret )
+        }
+
+        res()
+      } )
+    } );
+  }
+
+  /**
    * Exports the private key in Der format
    *
    * @returns The Der private key as a data Buffer.

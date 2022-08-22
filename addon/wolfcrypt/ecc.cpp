@@ -70,6 +70,47 @@ Napi::Number bind_wc_ecc_make_key(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, ret );
 }
 
+class wc_ecc_make_keyAsyncWorker : public Napi::AsyncWorker
+{
+  public:
+    wc_ecc_make_keyAsyncWorker( Napi::Function& callback, ecc_key* ecc, int key_size )
+      : Napi::AsyncWorker( callback ), ecc( ecc ), key_size( key_size )
+    {
+    }
+
+    ~wc_ecc_make_keyAsyncWorker() {}
+
+    void Execute() override
+    {
+      ret = wc_ecc_make_key( ecc->rng, key_size, ecc );
+    }
+
+    void OnOK() override
+    {
+      Napi::HandleScope scope(Env());
+      Callback().Call({Env().Undefined(), Napi::Number::New(Env(), ret)});
+    }
+  private:
+    ecc_key* ecc;
+    int key_size;
+    int ret;
+};
+
+// uses the above async worker to make the key, callback will be called
+// when the key has completed
+Napi::Value wc_ecc_make_key_async(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  int key_size = info[0].As<Napi::Number>().Int32Value();
+  ecc_key* ecc = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
+  Napi::Function callback = info[2].As<Napi::Function>();
+
+  wc_ecc_make_keyAsyncWorker* key_worker = new wc_ecc_make_keyAsyncWorker( callback, ecc, key_size );
+  key_worker->Queue();
+
+  return env.Undefined();
+}
+
 Napi::Number sizeof_ecc_x963(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
