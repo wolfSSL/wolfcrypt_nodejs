@@ -21,7 +21,28 @@
 
 const wolfcrypt = require( '../build/Release/wolfcrypt' )
 
-const WolfSSL_PBDKF2 = function( password, salt, iterations, keyLen, hash_type )
+/**
+ * Generates a new key using the key derivation function
+ *
+ * @param password The password to use.
+ *
+ * @param salt The salt to use.
+ *
+ * @param iterations The number of iterations to use for derivation.
+ *
+ * @param keyLen The length of the key to be derived.
+ *
+ * @param hash_type The hashing algorithm to be used for derivation.
+ *
+ * @returns true if the signature matches, false otherwise.
+ *
+ * @throws {Error} If passowrd or salt are not buffers.
+ *
+ * @throws {Error} If hash_type is not a known hashing algorithm.
+ *
+ * @throws {Error} If wc_PBKDF2 fails.
+ */
+const WolfSSL_PBKDF2 = function( password, salt, iterations, keyLen, hash_type )
 {
   if ( !Buffer.isBuffer( password ) )
   {
@@ -52,4 +73,4 @@ const WolfSSL_PBDKF2 = function( password, salt, iterations, keyLen, hash_type )
   return key
 }
 
-exports.WolfSSL_PBDKF2 = WolfSSL_PBDKF2
+exports.WolfSSL_PBKDF2 = WolfSSL_PBKDF2

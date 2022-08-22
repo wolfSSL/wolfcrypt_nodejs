@@ -22,6 +22,11 @@ const wolfcrypt = require( '../build/Release/wolfcrypt' )
 
 class WolfSSLEcc
 {
+  /**
+   * Creates a new ecc_key structure by calling sizeof_ecc_key and wc_ecc_init
+   *
+   * @remarks free must be called to free the ecc key data
+   */
   constructor()
   {
     this.ecc = Buffer.alloc( wolfcrypt.sizeof_ecc_key() )
@@ -34,6 +39,15 @@ class WolfSSLEcc
     }
   }
 
+  /**
+   * Makes a new ecc key and fills the ecc struct with the key data
+   *
+   * @param size The size of the ecc key.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If wc_ecc_make_key fails.
+   */
   make_key( size )
   {
     if ( this.ecc == null )
@@ -49,6 +63,15 @@ class WolfSSLEcc
     }
   }
 
+  /**
+   * Exports the ecc public key in x963 format
+   *
+   * @returns The x963 public key as a data Buffer.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If wc_ecc_export_x963 fails.
+   */
   export_x963()
   {
     if ( this.ecc == null )
@@ -71,6 +94,17 @@ class WolfSSLEcc
     return asnBuf
   }
 
+  /**
+   * Imports the ecc public key from x963 format
+   *
+   * @param asnBuf A data Buffer containing the x963 key.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If ansBuf is not a Buffer.
+   *
+   * @throws {Error} If wc_ecc_import_x963 fails.
+   */
   import_x963( asnBuf )
   {
     if ( this.ecc == null )
@@ -78,9 +112,9 @@ class WolfSSLEcc
       throw 'Ecc not allocated'
     }
 
-    if ( typeof asnBuf == 'string' )
+    if ( !Buffer.isBuffer( asnBuf ) )
     {
-      asnBuf = Buffer.from( asnBuf )
+      throw `asnBuf must be a Buffer`
     }
 
     let ret = wolfcrypt.wc_ecc_import_x963( asnBuf, asnBuf.length, this.ecc )
@@ -91,6 +125,15 @@ class WolfSSLEcc
     }
   }
 
+  /**
+   * Exports the ecc public key to Der format
+   *
+   * @returns The Der public key as a data Buffer.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If wc_EccPublicKeyToDer fails.
+   */
   PublicKeyToDer()
   {
     if ( this.ecc == null )
@@ -110,6 +153,17 @@ class WolfSSLEcc
     return derBuf
   }
 
+  /**
+   * Imports the ecc public key from Der format
+   *
+   * @param derBuf A data Buffer containing the Der public key.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If derBuf is not a Buffer.
+   *
+   * @throws {Error} If wc_EccPublicKeyDecode fails.
+   */
   PublicKeyDecode( derBuf )
   {
     if ( this.ecc == null )
@@ -130,6 +184,15 @@ class WolfSSLEcc
     }
   }
 
+  /**
+   * Exports the ecc private key to Der format
+   *
+   * @returns The Der private key as a data Buffer.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If wc_EccPrivateKeyToDer fails.
+   */
   PrivateKeyToDer()
   {
     if ( this.ecc == null )
@@ -149,6 +212,17 @@ class WolfSSLEcc
     return derBuf
   }
 
+  /**
+   * Imports the ecc private key from Der format
+   *
+   * @param derBuf A data Buffer containing the Der private key.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If derBuf is not a Buffer.
+   *
+   * @throws {Error} If wc_EccPrivateKeyDecode fails.
+   */
   PrivateKeyDecode( derBuf )
   {
     if ( this.ecc == null )
@@ -169,6 +243,17 @@ class WolfSSLEcc
     }
   }
 
+  /**
+   * Sets the key size and curveId that the ecc key is to use
+   *
+   * @param keySize Size of the ecc key.
+   *
+   * @param curveId Curveid that matches to an ecc_set within wolfcrypt.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   *
+   * @throws {Error} If wc_ecc_set_curve fails.
+   */
   set_curve( keySize, curveId )
   {
     if ( this.ecc == null )
@@ -184,6 +269,19 @@ class WolfSSLEcc
     }
   }
 
+  /**
+   * Computes the shared secret of this key and the key passed in
+   *
+   * @param pubEcc Public key to use with this private key.
+   *
+   * @returns The shared secret as a data Buffer.
+   *
+   * @throws {Error} If either ecc key is not allocated.
+   *
+   * @throws {Error} If wc_ecc_size fails.
+   *
+   * @throws {Error} If wc_ecc_shared_secret fails.
+   */
   shared_secret( pubEcc )
   {
     if ( this.ecc == null || pubEcc.ecc == null )
@@ -210,6 +308,19 @@ class WolfSSLEcc
     return secret
   }
 
+  /**
+   * Computes the signature of the data passed in using this private key
+   *
+   * @param data The data to be signed, as string or Buffer.
+   *
+   * @returns The signature for this data.
+   *
+   * @throws {Error} If ecc key is not allocated.
+   *
+   * @throws {Error} If wc_ecc_sig_size fails.
+   *
+   * @throws {Error} If wc_ecc_sign_hash fails.
+   */
   sign_hash( data )
   {
     if ( this.ecc == null )
@@ -243,6 +354,19 @@ class WolfSSLEcc
     return sig;
   }
 
+  /**
+   * Verifies the signature of the data passed in using this public key
+   *
+   * @param sig The signature to verify.
+   *
+   * @param hash The original data that the signature was generated from, as a string or Buffer.
+   *
+   * @returns true if the signature matches, false otherwise.
+   *
+   * @throws {Error} If ecc key is not allocated.
+   *
+   * @throws {Error} If wc_ecc_verify_hash fails.
+   */
   verify_hash( sig, hash )
   {
     if ( this.ecc == null )
@@ -275,6 +399,13 @@ class WolfSSLEcc
     return false
   }
 
+  /**
+   * Frees the data allocated by the ecc key
+   *
+   * @throws {Error} If ecc key is not allocated.
+   *
+   * @throws {Error} If wc_ecc_free fails.
+   */
   free()
   {
     if ( this.ecc == null )
