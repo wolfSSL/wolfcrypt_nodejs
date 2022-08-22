@@ -36,6 +36,13 @@ const { wolfcrypt, WolfSSLEncryptionStream } = require( 'wolfcrypt' )
 
 Examples of how to use this library can be found in the tests directory
 
+### Installing latest main without upstream package
+
+```
+npm i
+npm run build
+```
+
 ## Tests Output
 
 ```
