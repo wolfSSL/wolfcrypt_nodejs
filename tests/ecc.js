@@ -25,24 +25,51 @@ const message16 = '1234567890123456'
 
 const ecc_tests =
 {
-  ecc_makeKey: function()
+  ecc_makeKey: async function()
   {
+    // first check sync
     let ecc = new WolfSSLEcc()
 
     ecc.make_key( 32 )
 
     ecc.free()
 
-    console.log( 'PASS ecc makeKey' )
+    // check promise
+    ecc = new WolfSSLEcc()
+
+    await ecc.make_key_promise( 32 )
+
+    ecc.free()
+
+    // check callback
+    ecc = new WolfSSLEcc()
+
+    await new Promise( ( res, rej ) =>
+    {
+      ecc.make_key_cb( 32, ( err, ret ) =>
+      {
+        if ( err || ret != 0 )
+        {
+          console.log( 'FAIL ecc make_key' )
+        }
+        else
+        {
+          console.log( 'PASS ecc make_key' )
+        }
+
+        ecc.free()
+        res()
+      } )
+    } )
   },
 
-  ecc_sharedSecret32: function()
+  ecc_sharedSecret32: async function()
   {
     let ecc0 = new WolfSSLEcc()
     let ecc1 = new WolfSSLEcc()
 
-    ecc0.make_key( 32 )
-    ecc1.make_key( 32 )
+    // make both keys concurrently
+    await Promise.all([ ecc0.make_key_promise( 32 ), ecc1.make_key_promise( 32 ) ])
 
     const secret_0 = ecc0.shared_secret( ecc1 ).toString( 'hex' )
     const secret_1 = ecc1.shared_secret( ecc0 ).toString( 'hex' )
@@ -60,13 +87,13 @@ const ecc_tests =
     }
   },
 
-  ecc_sharedSecret64: function()
+  ecc_sharedSecret64: async function()
   {
     let ecc0 = new WolfSSLEcc()
     let ecc1 = new WolfSSLEcc()
 
-    ecc0.make_key( 64 )
-    ecc1.make_key( 64 )
+    // make both keys concurrently
+    await Promise.all([ ecc0.make_key_promise( 64 ), ecc1.make_key_promise( 64 ) ])
 
     const secret_0 = ecc0.shared_secret( ecc1 ).toString( 'hex' )
     const secret_1 = ecc1.shared_secret( ecc0 ).toString( 'hex' )

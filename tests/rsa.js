@@ -28,11 +28,49 @@ const message = '\ntesttesttest\n'
 
 const rsa_tests =
 {
-  rsa_keyToDer: function()
+  rsa_MakeRsaKey: async function()
   {
+    // check sync first
     let rsa = new WolfSSLRsa()
 
     rsa.MakeRsaKey( 2048, 65537 )
+
+    rsa.free()
+
+    // check promise
+    rsa = new WolfSSLRsa()
+
+    await rsa.MakeRsaKey_promise( 2048, 65537 )
+
+    rsa.free()
+
+    // check cb
+    rsa = new WolfSSLRsa()
+
+    await new Promise( ( res, rej ) =>
+    {
+      rsa.MakeRsaKey_cb( 2048, 65537, ( err, ret ) =>
+      {
+        if ( err || ret != 0 )
+        {
+          console.log( 'FAIL rsa MakeRsaKey' )
+        }
+        else
+        {
+          console.log( 'PASS rsa MakeRsaKey' )
+        }
+
+        rsa.free()
+        res()
+      } )
+    } )
+  },
+
+  rsa_keyToDer: async function()
+  {
+    let rsa = new WolfSSLRsa()
+
+    await rsa.MakeRsaKey_promise( 2048, 65537 )
 
     const derHex = rsa.KeyToDer().toString( 'hex' )
 

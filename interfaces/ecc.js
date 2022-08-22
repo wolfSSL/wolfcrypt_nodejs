@@ -64,6 +64,58 @@ class WolfSSLEcc
   }
 
   /**
+   * Makes a new ecc key and fills the ecc struct with the key data, callback
+   *
+   * @param size The size of the ecc key.
+   *
+   * @param cb The callback function to call when the key has been completed.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   */
+  make_key_cb( size, cb )
+  {
+    if ( this.ecc == null )
+    {
+      throw 'Ecc not allocated'
+    }
+
+    wolfcrypt.wc_ecc_make_key_async( size, this.ecc, cb )
+  }
+
+  /**
+   * Makes a new ecc key and fills the ecc struct with the key data, promise
+   *
+   * @param size The size of the ecc key.
+   *
+   * @returns A promise that will resolve when the key is ready and reject if the key fails.
+   *
+   * @throws {Error} If the ecc key is not allocated.
+   */
+  make_key_promise( size )
+  {
+    if ( this.ecc == null )
+    {
+      throw 'Ecc not allocated'
+    }
+
+    return new Promise( ( res, rej ) => {
+      wolfcrypt.wc_ecc_make_key_async( size, this.ecc, ( err, ret ) => {
+        if ( err )
+        {
+          return rej( err )
+        }
+
+        if ( ret != 0 )
+        {
+          return rej( ret )
+        }
+
+        res()
+      } )
+    } );
+  }
+
+  /**
    * Exports the ecc public key in x963 format
    *
    * @returns The x963 public key as a data Buffer.

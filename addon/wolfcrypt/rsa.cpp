@@ -18,6 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
+#include <stdio.h>
 #include "./h/rsa.h"
 
 Napi::Number sizeof_RsaKey(const Napi::CallbackInfo& info)
@@ -62,6 +63,49 @@ Napi::Number bind_wc_MakeRsaKey(const Napi::CallbackInfo& info)
   ret = wc_MakeRsaKey( rsa, size, e, rsa->rng );
 
   return Napi::Number::New( env, ret );
+}
+
+class wc_MakeRsaKeyAsyncWorker : public Napi::AsyncWorker
+{
+  public:
+    wc_MakeRsaKeyAsyncWorker( Napi::Function& callback, RsaKey* rsa, int size, long e )
+      : Napi::AsyncWorker( callback ), rsa( rsa ), size( size ), e( e )
+    {
+    }
+
+    ~wc_MakeRsaKeyAsyncWorker() {}
+
+    void Execute() override
+    {
+      ret = wc_MakeRsaKey( rsa, size, e, rsa->rng );
+    }
+
+    void OnOK() override
+    {
+      Napi::HandleScope scope(Env());
+      Callback().Call({Env().Undefined(), Napi::Number::New(Env(), ret)});
+    }
+  private:
+    RsaKey* rsa;
+    int size;
+    long e;
+    int ret;
+};
+
+// uses the above async worker to make the key, callback will be called
+// when the key has completed
+Napi::Value wc_MakeRsaKey_async(const Napi::CallbackInfo& info)
+{
+  Napi::Env env = info.Env();
+  RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
+  int size = info[1].As<Napi::Number>().Int32Value();
+  long e = info[2].As<Napi::Number>().Int64Value();
+  Napi::Function callback = info[3].As<Napi::Function>();
+
+  wc_MakeRsaKeyAsyncWorker* key_worker = new wc_MakeRsaKeyAsyncWorker( callback, rsa, size, e );
+  key_worker->Queue();
+
+  return env.Undefined();
 }
 
 Napi::Number RsaPrivateDerSize(const Napi::CallbackInfo& info)
