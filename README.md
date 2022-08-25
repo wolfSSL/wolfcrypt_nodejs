@@ -2,11 +2,11 @@
 
 ## Description
 
-This nodejs module exposes various wolfcrypt native C functions to nodejs using the napi library. It makes wolfcrypt functions for ecc, evp, hmac, PBKDF2, pkcs7, rsa and sha available within nodejs and also provides interface classes that streamline a lot of the tedious actions required when using these functions.
+This Node.js module exposes various wolfCrypt native C functions to Node.js using the Napi library. It makes wolfCrypt functions for ECC, EVP, HMAC, PBKDF2, PKCS7, RSA and SHA available within Nodejs and also provides interface classes that streamline a lot of the tedious actions required when using these functions.
 
 ### Native C Functions
 
-The native C functions can be called by importing wolfcrypt from this package:
+The native C functions can be called by importing wolfCrypt from this package:
 
 ```
 const { wolfcrypt } = require( 'wolfcrypt' )
@@ -33,11 +33,11 @@ console.log( ret == message.length )
 ret = wolfcrypt.wc_FreeRsaKey( rsaKey )
 ```
 
-`ret` will be the return value of the C function. It is important to note that wolfcrypt structures are not managed by the garbage collector and as in the above example the relevant function call must be made to free the memory used by wolfcrypt, in this case `wc_FreeRsaKey`. All of the available C functions can be found in `addon/wolfcrypt/main.cpp`.
+`ret` will be the return value of the C function. It is important to note that wolfcrypt structures are not managed by the garbage collector and as in the above example the relevant function call must be made to free the memory used by wolfCrypt, in this case `wc_FreeRsaKey`. All of the available C functions can be found in `addon/wolfcrypt/main.cpp`.
 
 ### Interface Classes
 
-Alternatively if you find using the native C functions within nodejs to be clunky, interface Classes have been provided to make using wolfcrypt more convenient in nodejs:
+Alternatively if you find using the native C functions within Node.js to be clunky, interface Classes have been provided to make using wolfCrypt more convenient in Node.js:
 
 ```
 const { WolfSSLRsa } = require( 'wolfcrypt' )
@@ -69,7 +69,7 @@ Instead of needing to check the return value of the C functions, the class will 
 
 ### Streams
 
-The evp and hmac interfaces include stream classes that allow them to process data from stream buffers, which is convenient when working with files or http streams:
+The EVP and HMAC interfaces include stream classes that allow them to process data from stream buffers, which is convenient when working with files or http streams:
 
 ```
 const fs = require( 'fs' )
@@ -101,7 +101,7 @@ In the above example we take the contents of `message.txt` and compute the hmac 
 
 ### Async Support
 
-The rsa and ecc key make functions support async workers and can be called using either a promise or a callback function:
+The RSA and ECC key make functions support async workers and can be called using either a promise or a callback function:
 
 ```
 const { WolfSSLEcc } = require( 'wolfcrypt' );
@@ -171,7 +171,7 @@ make
 sudo make install
 ```
 
-To link wolfcrypt you need to run `export LD_LIBRARY_PATH=/usr/local/lib` or wherever you have your wolfssl installed:
+To link wolfCrypt you need to run `export LD_LIBRARY_PATH=/usr/local/lib` or wherever you have your wolfssl installed:
 
 Verify the .so (shared object) path and version in `binding.gyp`:
 
