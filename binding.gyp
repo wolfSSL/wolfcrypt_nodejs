@@ -17,7 +17,7 @@
             "<!@(node -p \"require('node-addon-api').include\")"
         ],
         'libraries': [
-          "/usr/local/lib/libwolfssl.so.34"
+          "/usr/local/lib/libwolfssl.so"
         ],
         'dependencies': [
             "<!(node -p \"require('node-addon-api').gyp\")"
