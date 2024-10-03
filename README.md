@@ -177,7 +177,7 @@ Verify the .so (shared object) path and version in `binding.gyp`:
 
 ```
         'libraries': [
-          "/usr/local/lib/libwolfssl.so.34"
+          "/usr/local/lib/libwolfssl.so"
         ],
 ```
 
