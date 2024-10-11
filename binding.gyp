@@ -17,11 +17,17 @@
             "<!@(node -p \"require('node-addon-api').include\")"
         ],
         'libraries': [
-          "/usr/local/lib/libwolfssl.so"
+            "/usr/local/lib/libwolfssl.so"
         ],
         'dependencies': [
-            "<!(node -p \"require('node-addon-api').gyp\")"
+            "<!(node -p \"require('node-addon-api').gyp\")",
         ],
-        'defines': [ 'NAPI_DISABLE_C_EXCEPTIONS' ]
+        'defines': [ 'NAPI_DISABLE_C_EXCEPTIONS' ],
+        'msvs_settings': {
+            'VCCLCompilerTool': {
+                'ExceptionHandling': '1',    
+                'AdditionalOptions': ['/EHsc']
+            }
+        }
     }]
 }
