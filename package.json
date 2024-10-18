@@ -13,7 +13,7 @@
   "license": "GPL-2.0",
   "devDependencies": {
     "@types/node": "^18.0.6",
-    "node-gyp": "^9.1.0"
+    "node-gyp": "^9.4.1"
   },
   "dependencies": {
     "node-addon-api": "^5.0.0"

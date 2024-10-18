@@ -21,9 +21,13 @@
 #include <napi.h>
 #include <stdio.h>
 #include <cstring>
+#ifndef WOLFSSL_USER_SETTINGS
 #include "wolfssl/options.h"
+#else
+#include "../user_settings.h"
+#endif
+#include <wolfssl/wolfcrypt/types.h>
 #include "wolfssl/ssl.h"
-#include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/openssl/evp.h>
 
 Napi::Value bind_EVP_CIPHER_CTX_new(const Napi::CallbackInfo& info);
