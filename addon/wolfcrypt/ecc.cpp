@@ -130,7 +130,9 @@ Napi::Number bind_wc_ecc_export_x963(const Napi::CallbackInfo& info)
   uint8_t* out = (uint8_t*)( info[1].As<Napi::Uint8Array>().Data() );
   unsigned int out_len = info[2].As<Napi::Number>().Int32Value();
 
+  PRIVATE_KEY_UNLOCK();
   ret = wc_ecc_export_x963( ecc, out, &out_len );
+  PRIVATE_KEY_LOCK();
 
   if ( ret < 0 )
   {
@@ -212,7 +214,9 @@ Napi::Number bind_wc_EccPrivateKeyToDer(const Napi::CallbackInfo& info)
   uint8_t* out = (uint8_t*)( info[1].As<Napi::Uint8Array>().Data() );
   unsigned int out_len = info[2].As<Napi::Number>().Int32Value();
 
+  PRIVATE_KEY_UNLOCK();
   ret = wc_EccPrivateKeyToDer( ecc, out, out_len );
+  PRIVATE_KEY_LOCK();
 
   return Napi::Number::New( env, ret );
 }
@@ -226,7 +230,9 @@ Napi::Number bind_wc_EccPrivateKeyDecode(const Napi::CallbackInfo& info)
   unsigned int in_len = info[2].As<Napi::Number>().Int32Value();
   unsigned int idx = 0;
 
+  PRIVATE_KEY_UNLOCK();
   ret = wc_EccPrivateKeyDecode( in, &idx, ecc, in_len );
+  PRIVATE_KEY_LOCK();
 
   return Napi::Number::New( env, ret );
 }
@@ -253,7 +259,9 @@ Napi::Number bind_wc_ecc_shared_secret(const Napi::CallbackInfo& info)
   uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
   unsigned int out_len = info[3].As<Napi::Number>().Uint32Value();
 
+  PRIVATE_KEY_UNLOCK();
   ret = wc_ecc_shared_secret( private_key, public_key, out, &out_len );
+  PRIVATE_KEY_LOCK();
 
   if ( ret < 0 )
   {
@@ -284,7 +292,9 @@ Napi::Number bind_wc_ecc_sign_hash(const Napi::CallbackInfo& info)
   unsigned int out_len = info[3].As<Napi::Number>().Int32Value();
   ecc_key* ecc = (ecc_key*)( info[4].As<Napi::Uint8Array>().Data() );
 
+  PRIVATE_KEY_UNLOCK();
   ret = wc_ecc_sign_hash( in, in_len, out, &out_len, ecc->rng, ecc );
+  PRIVATE_KEY_LOCK();
 
   if ( ret < 0 )
   {

@@ -54,12 +54,16 @@ Napi::Number bind_wolfSSL_SHA512_Init(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_Update(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_Final(const Napi::CallbackInfo& info);
 
+#ifndef WOLFSSL_NOSHA512_224
 Napi::Number sizeof_WOLFSSL_SHA512_224_CTX(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_224_Init(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_224_Update(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_224_Final(const Napi::CallbackInfo& info);
+#endif
 
+#ifndef WOLFSSL_NOSHA512_256
 Napi::Number sizeof_WOLFSSL_SHA512_256_CTX(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_256_Init(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_256_Update(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_256_Final(const Napi::CallbackInfo& info);
+#endif

@@ -27,6 +27,11 @@ const pkcs7_tests =
 {
   pkcs7_addCertificate: function()
   {
+    if (process.env.WOLFCRYPT_FIPS) {
+      console.log('SKIP pkcs7 for FIPS')
+      return
+    }
+
     const cert = fs.readFileSync( './client-cert.der' )
 
     let pkcs7 = new WolfSSL_PKCS7()
@@ -39,6 +44,11 @@ const pkcs7_tests =
 
   pkcs7_encodeData: function()
   {
+    if (process.env.WOLFCRYPT_FIPS) {
+      console.log('SKIP pkcs7 for FIPS')
+      return
+    }
+
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )
 
@@ -54,6 +64,11 @@ const pkcs7_tests =
 
   pkcs7_signVerify: function()
   {
+    if (process.env.WOLFCRYPT_FIPS) {
+      console.log('SKIP pkcs7 for FIPS')
+      return
+    }
+
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )
 
@@ -73,6 +88,11 @@ const pkcs7_tests =
 
   pkcs7_getAttribute: function()
   {
+    if (process.env.WOLFCRYPT_FIPS) {
+      console.log('SKIP pkcs7 for FIPS')
+      return
+    }
+
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )
 
@@ -95,6 +115,11 @@ const pkcs7_tests =
 
   pkcs7_getSid: function()
   {
+    if (process.env.WOLFCRYPT_FIPS) {
+      console.log('SKIP pkcs7 for FIPS')
+      return
+    }
+
     const cert = fs.readFileSync( './client-cert.der' )
     const key = fs.readFileSync( './client-key.der' )
 

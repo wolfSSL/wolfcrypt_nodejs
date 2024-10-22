@@ -19,11 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
 #include <napi.h>
-#include <wolfssl/options.h>
-#include <wolfssl/wolfcrypt/settings.h>
+#ifndef WOLFSSL_USER_SETTINGS
+#include "wolfssl/options.h"
+#else
+#include "../user_settings.h"
+#endif
+#include <wolfssl/wolfcrypt/types.h>
 #include <wolfssl/wolfcrypt/error-crypt.h>
 #include <wolfssl/wolfcrypt/pkcs7.h>
 
+#ifdef HAVE_PKCS7
 Napi::Number sizeof_PKCS7(const Napi::CallbackInfo& info);
 Napi::Number typeof_Key_Sum(const Napi::CallbackInfo& info);
 Napi::Number typeof_Hash_Sum(const Napi::CallbackInfo& info);
@@ -38,3 +43,4 @@ Napi::Number bind_wc_PKCS7_GetAttributeValue(const Napi::CallbackInfo& info);
 Napi::Number sizeof_wc_PKCS7_GetSignerSID(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_PKCS7_GetSignerSID(const Napi::CallbackInfo& info);
 void bind_wc_PKCS7_Free(const Napi::CallbackInfo& info);
+#endif

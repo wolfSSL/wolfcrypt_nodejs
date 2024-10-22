@@ -20,6 +20,7 @@
  */
 #include "./h/pkcs7.h"
 
+#ifdef HAVE_PKCS7
 Napi::Number sizeof_PKCS7(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
@@ -331,3 +332,4 @@ void bind_wc_PKCS7_Free(const Napi::CallbackInfo& info)
 
   wc_PKCS7_Free( pkcs7 );
 }
+#endif

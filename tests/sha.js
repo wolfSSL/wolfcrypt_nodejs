@@ -123,6 +123,11 @@ const sha_tests =
 
   sha512_224: function()
   {
+    if (process.env.WOLFCRYPT_FIPS) {
+      console.log('SKIP SHA512_224 for FIPS')
+      return
+    }
+
     let sha = new WolfSSLSha( 'SHA512_224' )
 
     sha.update( message )
@@ -141,6 +146,11 @@ const sha_tests =
 
   sha512_256: function()
   {
+    if (process.env.WOLFCRYPT_FIPS) {
+      console.log('SKIP SHA512_256 for FIPS')
+      return
+    }
+
     let sha = new WolfSSLSha( 'SHA512_256' )
 
     sha.update( message )

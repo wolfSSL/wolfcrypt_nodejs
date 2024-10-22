@@ -46,14 +46,18 @@ Napi::Number Sha_digest_length(const Napi::CallbackInfo& info)
   {
     length = WC_SHA512_DIGEST_SIZE;
   }
+#ifndef WOLFSSL_NOSHA512_224
   else if ( strcmp( type.c_str(), "SHA512_224" ) == 0 )
   {
     length = WC_SHA512_224_DIGEST_SIZE;
   }
+#endif
+#ifndef WOLFSSL_NOSHA512_256
   else if ( strcmp( type.c_str(), "SHA512_256" ) == 0 )
   {
     length = WC_SHA512_256_DIGEST_SIZE;
   }
+#endif
 
   return Napi::Number::New( env, length );
 }
@@ -273,6 +277,7 @@ Napi::Number bind_wolfSSL_SHA512_Final(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, ret );
 }
 
+#ifndef WOLFSSL_NOSHA512_224
 Napi::Number sizeof_WOLFSSL_SHA512_224_CTX(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
@@ -315,7 +320,9 @@ Napi::Number bind_wolfSSL_SHA512_224_Final(const Napi::CallbackInfo& info)
 
   return Napi::Number::New( env, ret );
 }
+#endif
 
+#ifndef WOLFSSL_NOSHA512_256
 Napi::Number sizeof_WOLFSSL_SHA512_256_CTX(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
@@ -358,3 +365,4 @@ Napi::Number bind_wolfSSL_SHA512_256_Final(const Napi::CallbackInfo& info)
 
   return Napi::Number::New( env, ret );
 }
+#endif
