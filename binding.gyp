@@ -11,7 +11,8 @@
             "addon/wolfcrypt/sha.cpp",
             "addon/wolfcrypt/ecc.cpp",
             "addon/wolfcrypt/pbkdf2.cpp",
-            "addon/wolfcrypt/pkcs7.cpp"
+            "addon/wolfcrypt/pkcs7.cpp",
+            "addon/wolfcrypt/pkcs12.cpp"
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"

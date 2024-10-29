@@ -28,6 +28,7 @@
 #include "./h/ecc.h"
 #include "./h/pbkdf2.h"
 #include "./h/pkcs7.h"
+#include "./h/pkcs12.h"
 
 using namespace Napi;
 
@@ -155,6 +156,13 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_PKCS7_GetSignerSID"), Napi::Function::New(env, bind_wc_PKCS7_GetSignerSID));
   exports.Set(Napi::String::New(env, "wc_PKCS7_Free"), Napi::Function::New(env, bind_wc_PKCS7_Free));
 #endif
+
+  exports.Set(Napi::String::New(env, "wc_PKCS12_new"), Napi::Function::New(env, bind_wc_PKCS12_new));
+  exports.Set(Napi::String::New(env, "nodejsPKCS12Create"), Napi::Function::New(env, nodejsPKCS12Create));
+  exports.Set(Napi::String::New(env, "nodejsPKCS12Parse"), Napi::Function::New(env, nodejsPKCS12Parse));
+  exports.Set(Napi::String::New(env, "wc_d2i_PKCS12"), Napi::Function::New(env, bind_wc_d2i_PKCS12));
+  exports.Set(Napi::String::New(env, "nodejsPKCS12InternalToDer"), Napi::Function::New(env, nodejsPKCS12InternalToDer));
+  exports.Set(Napi::String::New(env, "wc_PKCS12_free"), Napi::Function::New(env, bind_wc_PKCS12_free));
 
   return exports;
 }
