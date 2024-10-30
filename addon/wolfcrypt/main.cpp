@@ -32,6 +32,7 @@
 
 using namespace Napi;
 
+#ifdef HAVE_FIPS
 static void myFipsCb(int ok, int err, const char* hash)
 {
     printf("in my Fips callback, ok = %d, err = %d\n", ok, err);
@@ -43,6 +44,7 @@ static void myFipsCb(int ok, int err, const char* hash)
         printf("into verifyCore[] in fips_test.c and rebuild\n");
     }
 }
+#endif
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
