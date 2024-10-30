@@ -32,16 +32,25 @@
 
 using namespace Napi;
 
+static void myFipsCb(int ok, int err, const char* hash)
+{
+    printf("in my Fips callback, ok = %d, err = %d\n", ok, err);
+    printf("message = %s\n", wc_GetErrorString(err));
+    printf("hash = %s\n", hash);
+
+    if (err == WC_NO_ERR_TRACE(IN_CORE_FIPS_E)) {
+        printf("In core integrity hash check failure, copy above hash\n");
+        printf("into verifyCore[] in fips_test.c and rebuild\n");
+    }
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
 #ifdef HAVE_FIPS
 #ifdef WC_RNG_SEED_CB
     wc_SetSeed_Cb(wc_GenerateSeed);
+    wolfCrypt_SetCb_fips(myFipsCb);
 #endif
-    if (wc_RunAllCast_fips() != 0) {
-        printf("wc_RunAllCast_fips FAILED\n");
-        return exports;
-    }
 #endif
 
   exports.Set(Napi::String::New(env, "EVP_CIPHER_CTX_new"), Napi::Function::New(env, bind_EVP_CIPHER_CTX_new));
