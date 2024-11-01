@@ -153,22 +153,16 @@ Napi::Number bind_wc_d2i_PKCS12(const Napi::CallbackInfo& info)
 Napi::Buffer<uint8_t> nodejsPKCS12InternalToDer(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    int ret;
     WC_PKCS12* pkcs12 = info[0].As<Napi::External<WC_PKCS12>>().Data();
+    int ret;
     Napi::Buffer<uint8_t> der;
     byte* tmpDer = NULL;
-    int tmpDerSz;
+    int tmpDerSz = 0;
 
     ret = wc_i2d_PKCS12(pkcs12, &tmpDer, &tmpDerSz);
 
     if (ret > 0) {
-        der = Napi::Buffer<uint8_t>::Copy(env, tmpDer, tmpDerSz);
-        /* Copy fails when I removed my printfs (optomized out?) this forces the
-         * copy to go through */
-        while ((int)der.Length() != tmpDerSz) {
-            ret++;
-        }
-
+        der = Napi::Buffer<uint8_t>::Copy(env, tmpDer, ret);
         XFREE(tmpDer, NULL, DYNAMIC_TYPE_PKCS);
     }
 
