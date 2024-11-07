@@ -33,6 +33,13 @@ const pkcs12_tests =
         let pkcs12Create = new WolfSSL_PKCS12()
         let pkcs12Parse = new WolfSSL_PKCS12()
 
+        /* NOTE: FIPS no longer recognizes 3DES as a certifiable algorithm.
+         * PKCS12 has a dependency on 3DES at the moment but wolfSSL Inc.
+         * is considering adding support for AES (a FIPS approved
+         * algorithm) for use in PKCS12 when 3DES is insufficient due to
+         * FIPS requirements. If you'd like to see this feature added please
+         * contact support[at]wolfssl[dot]com to help raise the priority of
+         * this feature request addition. */
         pkcs12Create.Create('my secure password :D', key, cert, [caCert],
             WolfSSL_PKCS12.PBE_SHA1_DES3, WolfSSL_PKCS12.PBE_SHA1_DES3, 100,
             100)
