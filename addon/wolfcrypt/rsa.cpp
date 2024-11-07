@@ -18,13 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-#ifndef WOLFSSL_USER_SETTINGS
-#include "wolfssl/options.h"
-#else
-#include "../user_settings.h"
-#endif
-#include <wolfssl/wolfcrypt/types.h>
-#include <wolfssl/wolfcrypt/random.h>
 #include "./h/rsa.h"
 
 Napi::Number sizeof_RsaKey(const Napi::CallbackInfo& info)

@@ -51,8 +51,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 #ifdef HAVE_FIPS
 #ifdef WC_RNG_SEED_CB
     wc_SetSeed_Cb(wc_GenerateSeed);
-    wolfCrypt_SetCb_fips(myFipsCb);
 #endif
+    wolfCrypt_SetCb_fips(myFipsCb);
 #endif
 
   exports.Set(Napi::String::New(env, "EVP_CIPHER_CTX_new"), Napi::Function::New(env, bind_EVP_CIPHER_CTX_new));

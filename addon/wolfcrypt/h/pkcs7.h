@@ -21,9 +21,8 @@
 #include <napi.h>
 #ifndef WOLFSSL_USER_SETTINGS
 #include "wolfssl/options.h"
-#else
-#include "../user_settings.h"
 #endif
+#include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/types.h>
 #include <wolfssl/wolfcrypt/error-crypt.h>
 #include <wolfssl/wolfcrypt/pkcs7.h>
