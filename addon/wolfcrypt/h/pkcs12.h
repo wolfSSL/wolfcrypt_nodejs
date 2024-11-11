@@ -1,4 +1,4 @@
-/* evp.h
+/* pkcs12.h
  *
  * Copyright (C) 2006-2022 wolfSSL Inc.
  *
@@ -19,18 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
 #include <napi.h>
-#include <stdio.h>
-#include <cstring>
 #ifndef WOLFSSL_USER_SETTINGS
 #include "wolfssl/options.h"
 #endif
 #include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/types.h>
-#include "wolfssl/ssl.h"
-#include <wolfssl/openssl/evp.h>
+#include <wolfssl/wolfcrypt/error-crypt.h>
+#include <wolfssl/wolfcrypt/pkcs12.h>
 
-Napi::Value bind_EVP_CIPHER_CTX_new(const Napi::CallbackInfo& info);
-Napi::Number bind_EVP_CipherInit(const Napi::CallbackInfo& info);
-Napi::Number bind_EVP_CipherUpdate(const Napi::CallbackInfo& info);
-Napi::Number bind_EVP_CipherFinal(const Napi::CallbackInfo& info);
-void bind_EVP_CIPHER_CTX_free(const Napi::CallbackInfo& info);
+Napi::Value bind_wc_PKCS12_new(const Napi::CallbackInfo& info);
+Napi::Value nodejsPKCS12Create(const Napi::CallbackInfo& info);
+Napi::Object nodejsPKCS12Parse(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_d2i_PKCS12(const Napi::CallbackInfo& info);
+Napi::Buffer<uint8_t> nodejsPKCS12InternalToDer(const Napi::CallbackInfo& info);
+void bind_wc_PKCS12_free(const Napi::CallbackInfo& info);

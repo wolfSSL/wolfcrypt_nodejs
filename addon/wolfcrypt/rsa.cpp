@@ -18,7 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-#include <stdio.h>
 #include "./h/rsa.h"
 
 Napi::Number sizeof_RsaKey(const Napi::CallbackInfo& info)
@@ -46,8 +45,9 @@ Napi::Number bind_wc_InitRsaKey(const Napi::CallbackInfo& info)
   RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
 
   ret = wc_InitRsaKey( rsa, NULL );
-
+#ifdef WC_RSA_BLINDING
   rsa->rng = wc_rng_new( NULL, 0, NULL );
+#endif
 
   return Napi::Number::New( env, ret );
 }
@@ -57,10 +57,19 @@ Napi::Number bind_wc_MakeRsaKey(const Napi::CallbackInfo& info)
   int ret;
   Napi::Env env = info.Env();
   RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
+#ifdef WC_RSA_BLINDING
+  WC_RNG* rng = rsa->rng;
+#else
+  WC_RNG* rng = wc_rng_new( NULL, 0, NULL );
+#endif
   int size = info[1].As<Napi::Number>().Int32Value();
   long e = info[2].As<Napi::Number>().Int64Value();
 
-  ret = wc_MakeRsaKey( rsa, size, e, rsa->rng );
+  ret = wc_MakeRsaKey( rsa, size, e, rng );
+
+#ifndef WC_RSA_BLINDING
+  wc_rng_free( rng );
+#endif
 
   return Napi::Number::New( env, ret );
 }
@@ -77,7 +86,17 @@ class wc_MakeRsaKeyAsyncWorker : public Napi::AsyncWorker
 
     void Execute() override
     {
-      ret = wc_MakeRsaKey( rsa, size, e, rsa->rng );
+#ifdef WC_RSA_BLINDING
+      WC_RNG* rng = rsa->rng;
+#else
+      WC_RNG* rng = wc_rng_new( NULL, 0, NULL );
+#endif
+
+      ret = wc_MakeRsaKey( rsa, size, e, rng );
+
+#ifndef WC_RSA_BLINDING
+      wc_rng_free( rng );
+#endif
     }
 
     void OnOK() override
@@ -193,8 +212,17 @@ Napi::Number bind_wc_RsaPublicEncrypt(const Napi::CallbackInfo& info)
   uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
   int out_len = info[3].As<Napi::Number>().Int32Value();
   RsaKey* rsa = (RsaKey*)( info[4].As<Napi::Uint8Array>().Data() );
+#ifdef WC_RSA_BLINDING
+  WC_RNG* rng = rsa->rng;
+#else
+  WC_RNG* rng = wc_rng_new( NULL, 0, NULL );
+#endif
 
-  ret = wc_RsaPublicEncrypt( in, in_len, out, out_len, rsa, rsa->rng );
+  ret = wc_RsaPublicEncrypt( in, in_len, out, out_len, rsa, rng );
+
+#ifndef WC_RSA_BLINDING
+  wc_rng_free( rng );
+#endif
 
   return Napi::Number::New( env, ret );
 }
@@ -223,8 +251,17 @@ Napi::Number bind_wc_RsaSSL_Sign(const Napi::CallbackInfo& info)
   uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
   int out_len = info[3].As<Napi::Number>().Int32Value();
   RsaKey* rsa = (RsaKey*)( info[4].As<Napi::Uint8Array>().Data() );
+#ifdef WC_RSA_BLINDING
+  WC_RNG* rng = rsa->rng;
+#else
+  WC_RNG* rng = wc_rng_new( NULL, 0, NULL );
+#endif
 
-  ret = wc_RsaSSL_Sign( in, in_len, out, out_len, rsa, rsa->rng );
+  ret = wc_RsaSSL_Sign( in, in_len, out, out_len, rsa, rng );
+
+#ifndef WC_RSA_BLINDING
+  wc_rng_free( rng );
+#endif
 
   return Napi::Number::New( env, ret );
 }
@@ -249,11 +286,6 @@ Napi::Number bind_wc_FreeRsaKey(const Napi::CallbackInfo& info)
   int ret;
   Napi::Env env = info.Env();
   RsaKey* rsa = (RsaKey*)( info[0].As<Napi::Uint8Array>().Data() );
-
-  if ( rsa->rng != NULL )
-  {
-    wc_rng_free( rsa->rng );
-  }
 
   ret = wc_FreeRsaKey( rsa );
 

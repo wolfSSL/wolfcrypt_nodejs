@@ -28,11 +28,33 @@
 #include "./h/ecc.h"
 #include "./h/pbkdf2.h"
 #include "./h/pkcs7.h"
+#include "./h/pkcs12.h"
 
 using namespace Napi;
 
+#ifdef HAVE_FIPS
+static void myFipsCb(int ok, int err, const char* hash)
+{
+    printf("in my Fips callback, ok = %d, err = %d\n", ok, err);
+    printf("message = %s\n", wc_GetErrorString(err));
+    printf("hash = %s\n", hash);
+
+    if (err == WC_NO_ERR_TRACE(IN_CORE_FIPS_E)) {
+        printf("In core integrity hash check failure, copy above hash\n");
+        printf("into verifyCore[] in fips_test.c and rebuild\n");
+    }
+}
+#endif
+
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
+#ifdef HAVE_FIPS
+#ifdef WC_RNG_SEED_CB
+    wc_SetSeed_Cb(wc_GenerateSeed);
+#endif
+    wolfCrypt_SetCb_fips(myFipsCb);
+#endif
+
   exports.Set(Napi::String::New(env, "EVP_CIPHER_CTX_new"), Napi::Function::New(env, bind_EVP_CIPHER_CTX_new));
   exports.Set(Napi::String::New(env, "EVP_CipherInit"), Napi::Function::New(env, bind_EVP_CipherInit));
   exports.Set(Napi::String::New(env, "EVP_CipherUpdate"), Napi::Function::New(env, bind_EVP_CipherUpdate));
@@ -91,15 +113,19 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_Update"), Napi::Function::New(env, bind_wolfSSL_SHA512_Update));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_Final"), Napi::Function::New(env, bind_wolfSSL_SHA512_Final));
 
+#ifndef WOLFSSL_NOSHA512_224
   exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA512_224_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA512_224_CTX));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_224_Init"), Napi::Function::New(env, bind_wolfSSL_SHA512_224_Init));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_224_Update"), Napi::Function::New(env, bind_wolfSSL_SHA512_224_Update));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_224_Final"), Napi::Function::New(env, bind_wolfSSL_SHA512_224_Final));
+#endif
 
+#ifndef WOLFSSL_NOSHA512_256
   exports.Set(Napi::String::New(env, "sizeof_WOLFSSL_SHA512_256_CTX"), Napi::Function::New(env, sizeof_WOLFSSL_SHA512_256_CTX));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Init"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Init));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Update"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Update));
   exports.Set(Napi::String::New(env, "wolfSSL_SHA512_256_Final"), Napi::Function::New(env, bind_wolfSSL_SHA512_256_Final));
+#endif
 
   exports.Set(Napi::String::New(env, "sizeof_ecc_key"), Napi::Function::New(env, sizeof_ecc_key));
   exports.Set(Napi::String::New(env, "sizeof_ecc_point"), Napi::Function::New(env, sizeof_ecc_point));
@@ -125,6 +151,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 
   exports.Set(Napi::String::New(env, "wc_PBKDF2"), Napi::Function::New(env, bind_wc_PBKDF2));
 
+#ifdef HAVE_PKCS7
   exports.Set(Napi::String::New(env, "sizeof_PKCS7"), Napi::Function::New(env, sizeof_PKCS7));
   exports.Set(Napi::String::New(env, "typeof_Key_Sum"), Napi::Function::New(env, typeof_Key_Sum));
   exports.Set(Napi::String::New(env, "typeof_Hash_Sum"), Napi::Function::New(env, typeof_Hash_Sum));
@@ -139,6 +166,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "sizeof_wc_PKCS7_GetSignerSID"), Napi::Function::New(env, sizeof_wc_PKCS7_GetSignerSID));
   exports.Set(Napi::String::New(env, "wc_PKCS7_GetSignerSID"), Napi::Function::New(env, bind_wc_PKCS7_GetSignerSID));
   exports.Set(Napi::String::New(env, "wc_PKCS7_Free"), Napi::Function::New(env, bind_wc_PKCS7_Free));
+#endif
+
+  exports.Set(Napi::String::New(env, "wc_PKCS12_new"), Napi::Function::New(env, bind_wc_PKCS12_new));
+  exports.Set(Napi::String::New(env, "nodejsPKCS12Create"), Napi::Function::New(env, nodejsPKCS12Create));
+  exports.Set(Napi::String::New(env, "nodejsPKCS12Parse"), Napi::Function::New(env, nodejsPKCS12Parse));
+  exports.Set(Napi::String::New(env, "wc_d2i_PKCS12"), Napi::Function::New(env, bind_wc_d2i_PKCS12));
+  exports.Set(Napi::String::New(env, "nodejsPKCS12InternalToDer"), Napi::Function::New(env, nodejsPKCS12InternalToDer));
+  exports.Set(Napi::String::New(env, "wc_PKCS12_free"), Napi::Function::New(env, bind_wc_PKCS12_free));
 
   return exports;
 }

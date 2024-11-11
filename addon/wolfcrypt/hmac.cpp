@@ -49,14 +49,18 @@ Napi::Number typeof_Hmac(const Napi::CallbackInfo& info)
   {
     ret = WC_SHA512;
   }
+#ifndef WOLFSSL_NOSHA512_224
   else if ( strcmp( type.c_str(), "SHA512_224" ) == 0 )
   {
     ret = WC_SHA512_224;
   }
+#endif
+#ifndef WOLFSSL_NOSHA512_256
   else if ( strcmp( type.c_str(), "SHA512_256" ) == 0 )
   {
     ret = WC_SHA512_256;
   }
+#endif
   else if ( strcmp( type.c_str(), "SHA384" ) == 0 )
   {
     ret = WC_SHA384;
@@ -109,14 +113,18 @@ Napi::Number Hmac_digest_length(const Napi::CallbackInfo& info)
       length = WC_SHA512_DIGEST_SIZE;
 
       break;
+#ifndef WOLFSSL_NOSHA512_224
     case WC_SHA512_224:
       length = WC_SHA512_224_DIGEST_SIZE;
 
       break;
+#endif
+#ifndef WOLFSSL_NOSHA512_256
     case WC_SHA512_256:
       length = WC_SHA512_256_DIGEST_SIZE;
 
       break;
+#endif
     case WC_SHA384:
       length = WC_SHA384_DIGEST_SIZE;
 

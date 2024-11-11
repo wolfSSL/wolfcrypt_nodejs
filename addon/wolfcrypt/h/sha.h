@@ -19,8 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
 #include <napi.h>
+#ifndef WOLFSSL_USER_SETTINGS
 #include "wolfssl/options.h"
+#endif
 #include <wolfssl/wolfcrypt/settings.h>
+#include <wolfssl/wolfcrypt/types.h>
 #include <wolfssl/wolfcrypt/sha.h>
 #include <wolfssl/wolfcrypt/sha256.h>
 #include <wolfssl/wolfcrypt/sha512.h>
@@ -54,12 +57,16 @@ Napi::Number bind_wolfSSL_SHA512_Init(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_Update(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_Final(const Napi::CallbackInfo& info);
 
+#ifndef WOLFSSL_NOSHA512_224
 Napi::Number sizeof_WOLFSSL_SHA512_224_CTX(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_224_Init(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_224_Update(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_224_Final(const Napi::CallbackInfo& info);
+#endif
 
+#ifndef WOLFSSL_NOSHA512_256
 Napi::Number sizeof_WOLFSSL_SHA512_256_CTX(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_256_Init(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_256_Update(const Napi::CallbackInfo& info);
 Napi::Number bind_wolfSSL_SHA512_256_Final(const Napi::CallbackInfo& info);
+#endif

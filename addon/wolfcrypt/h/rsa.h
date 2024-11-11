@@ -19,10 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
 #include <napi.h>
-#include <wolfssl/options.h>
+#ifndef WOLFSSL_USER_SETTINGS
+#include "wolfssl/options.h"
+#endif
 #include <wolfssl/wolfcrypt/settings.h>
+#include <wolfssl/wolfcrypt/types.h>
 #include <wolfssl/wolfcrypt/rsa.h>
 #include <wolfssl/wolfcrypt/asn_public.h>
+#include <wolfssl/wolfcrypt/random.h>
 
 Napi::Number sizeof_RsaKey(const Napi::CallbackInfo& info);
 Napi::Number bind_wc_RsaEncryptSize(const Napi::CallbackInfo& info);
