@@ -1,6 +1,6 @@
 /* random.js
  *
- * Copyright (C) 2006-2022 wolfSSL Inc.
+ * Copyright (C) 2006-2024 wolfSSL Inc.
  *
  * This file is part of wolfSSL.
  *
@@ -25,15 +25,26 @@ const rng_tests =
     generateBlock: async function()
     {
         let rng = new WolfSSLRandom()
-        let rngOne = rng.GenerateBlock(1000)
-        let rngTwo = rng.GenerateBlock(1000)
+        let rngOne = rng.GenerateBlock(256)
+        let rngTwo = rng.GenerateBlock(256)
         rng.free()
 
         if (rngOne.equals(rngTwo)) {
             console.log('FAIL RNG generateBlock')
         }
         else {
-            console.log('PASS RNG generateBlock')
+            let i;
+            for (i = 0; i < rngOne.length; i++) {
+                if (rngOne[i] != 0) {
+                    break
+                }
+            }
+            if (i >= rngOne.length) {
+                console.log('FAIL RNG generateBlock')
+            }
+            else {
+                console.log('PASS RNG generateBlock')
+            }
         }
     }
 }
