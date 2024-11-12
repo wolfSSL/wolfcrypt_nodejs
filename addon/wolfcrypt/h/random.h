@@ -1,4 +1,4 @@
-/* test.js
+/* random.h
  *
  * Copyright (C) 2006-2024 wolfSSL Inc.
  *
@@ -18,11 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-const tests = require( './tests' );
+#include <napi.h>
+#ifndef WOLFSSL_USER_SETTINGS
+#include "wolfssl/options.h"
+#endif
+#include <wolfssl/wolfcrypt/settings.h>
+#include <wolfssl/wolfcrypt/types.h>
+#include <wolfssl/wolfcrypt/random.h>
 
-(async function() {
-  for ( const key of Object.keys( tests ) )
-  {
-    await tests[key]()
-  }
-})()
+Napi::Number sizeof_WC_RNG(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_InitRng(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_RNG_GenerateBlock(const Napi::CallbackInfo& info);
+Napi::Number bind_wc_FreeRng(const Napi::CallbackInfo& info);

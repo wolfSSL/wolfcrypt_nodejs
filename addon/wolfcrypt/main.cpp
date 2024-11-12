@@ -1,6 +1,6 @@
 /* main.cpp
  *
- * Copyright (C) 2006-2022 wolfSSL Inc.
+ * Copyright (C) 2006-2024 wolfSSL Inc.
  *
  * This file is part of wolfSSL.
  *
@@ -29,6 +29,7 @@
 #include "./h/pbkdf2.h"
 #include "./h/pkcs7.h"
 #include "./h/pkcs12.h"
+#include "./h/random.h"
 
 using namespace Napi;
 
@@ -174,6 +175,11 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "wc_d2i_PKCS12"), Napi::Function::New(env, bind_wc_d2i_PKCS12));
   exports.Set(Napi::String::New(env, "nodejsPKCS12InternalToDer"), Napi::Function::New(env, nodejsPKCS12InternalToDer));
   exports.Set(Napi::String::New(env, "wc_PKCS12_free"), Napi::Function::New(env, bind_wc_PKCS12_free));
+
+  exports.Set(Napi::String::New(env, "sizeof_WC_RNG"), Napi::Function::New(env, sizeof_WC_RNG));
+  exports.Set(Napi::String::New(env, "wc_InitRng"), Napi::Function::New(env, bind_wc_InitRng));
+  exports.Set(Napi::String::New(env, "wc_RNG_GenerateBlock"), Napi::Function::New(env, bind_wc_RNG_GenerateBlock));
+  exports.Set(Napi::String::New(env, "wc_FreeRng"), Napi::Function::New(env, bind_wc_FreeRng));
 
   return exports;
 }

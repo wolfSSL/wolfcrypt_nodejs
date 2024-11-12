@@ -1,4 +1,4 @@
-/* index.js
+/* random.js
  *
  * Copyright (C) 2006-2024 wolfSSL Inc.
  *
@@ -18,25 +18,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
-const fs = require( 'fs' )
-const path = require( 'path' )
-const interfaces = path.join( __dirname, 'interfaces' )
-const wolfcrypt = require( path.join( __dirname, 'build/Release/wolfcrypt' ) );
-const actions = {}
+const { WolfSSLRandom } = require( '../interfaces/random' )
 
-actions.wolfcrypt = wolfcrypt
-
-fs.readdirSync( interfaces )
-  .filter ( file => {
-    return ( file.indexOf( '.' ) !== 0 ) && ( file.slice( -3 ) === '.js' )
-  } )
-  .forEach( file => {
-    const face = require( path.join( interfaces, file ) )
-
-    for ( const key of Object.keys( face ) )
+const rng_tests =
+{
+    generateBlock: async function()
     {
-      actions[key] = face[key]
-    }
-  } )
+        let rng = new WolfSSLRandom()
+        let rngOne = rng.GenerateBlock(256)
+        let rngTwo = rng.GenerateBlock(256)
+        rng.free()
 
-module.exports = actions
+        if (rngOne.equals(rngTwo)) {
+            console.log('FAIL RNG generateBlock')
+        }
+        else {
+            let i;
+            for (i = 0; i < rngOne.length; i++) {
+                if (rngOne[i] != 0) {
+                    break
+                }
+            }
+            if (i >= rngOne.length) {
+                console.log('FAIL RNG generateBlock')
+            }
+            else {
+                console.log('PASS RNG generateBlock')
+            }
+        }
+    }
+}
+
+module.exports = rng_tests
