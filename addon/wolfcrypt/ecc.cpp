@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
  */
 #include "./h/ecc.h"
+#include <wolfssl/wolfcrypt/ecc.h>
+#include <wolfssl/wolfcrypt/random.h>
 
 Napi::Number sizeof_ecc_key(const Napi::CallbackInfo& info)
 {
@@ -64,7 +66,13 @@ Napi::Number bind_wc_ecc_make_key(const Napi::CallbackInfo& info)
   int ret;
   int key_size = info[0].As<Napi::Number>().Int32Value();
   ecc_key* ecc = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
-
+  WC_RNG rng;
+  ret = wc_InitRng(&rng);
+  if (ret < 0) {
+      printf("Failed to bind_wc_ecc_make_key wc_InitRng ret = %d\n", ret);
+      return Napi::Number::New(env, ret);  // Return error code
+  }
+  printf("wc_ecc_make_key...");
   ret = wc_ecc_make_key( ecc->rng, key_size, ecc );
 
   return Napi::Number::New( env, ret );
@@ -250,25 +258,61 @@ Napi::Number bind_wc_ecc_set_curve(const Napi::CallbackInfo& info)
   return Napi::Number::New( env, ret );
 }
 
+void print_hex(const char* label, const uint8_t* data, size_t len)
+{
+    int n = 0;
+    printf("%s:\n", label);
+    for (size_t i = 0; i < len; i++) {
+        printf("%02X ", data[i]);
+        n++;
+        if (n > 15) {
+            printf("\n");
+            n = 0;
+        }
+    }
+    printf("\n");
+}
+
+
 Napi::Number bind_wc_ecc_shared_secret(const Napi::CallbackInfo& info)
 {
-  Napi::Env env = info.Env();
-  int ret;
-  ecc_key* private_key = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
-  ecc_key* public_key = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
-  uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
-  unsigned int out_len = info[3].As<Napi::Number>().Uint32Value();
+    Napi::Env env = info.Env();
+    int ret;
+    ecc_key* private_key = (ecc_key*)( info[0].As<Napi::Uint8Array>().Data() );
+    ecc_key* public_key = (ecc_key*)( info[1].As<Napi::Uint8Array>().Data() );
+
+    int key_len = 255;
+#ifdef DEBUG_WOLFSSL
+    print_hex("\n\nPrivate Key", (const uint8_t*)private_key, key_len);
+
+    print_hex("\n\nPublic Key ", (const uint8_t*)public_key, key_len);
+#endif
+    /* Alternatively call wolfSSL_Init() or comparable API */
+    /* Mandatory with FIPS, will also trigger DRBG CAST */
+#ifdef WC_RNG_SEED_CB
+    wc_SetSeed_Cb(wc_GenerateSeed);
+#endif
+    uint8_t* out = info[2].As<Napi::Uint8Array>().Data();
+    unsigned int out_len = info[3].As<Napi::Number>().Uint32Value();
 
   PRIVATE_KEY_UNLOCK();
   ret = wc_ecc_shared_secret( private_key, public_key, out, &out_len );
   PRIVATE_KEY_LOCK();
 
-  if ( ret < 0 )
-  {
-    out_len = ret;
-  }
-
-  return Napi::Number::New( env, (int)out_len );
+    if ( ret < 0 )
+    {
+        out_len = ret;
+#ifdef DEBUG_WOLFSSL
+        printf("\n\nwc_ecc_shared_secret error %d\n", ret);
+#endif
+    }
+    else
+    {
+#ifdef DEBUG_WOLFSSL
+        printf("\n\nwc_ecc_shared_secret success");
+#endif
+    }
+    return Napi::Number::New(env, (int)out_len);
 }
 
 Napi::Number bind_wc_ecc_sig_size(const Napi::CallbackInfo& info)

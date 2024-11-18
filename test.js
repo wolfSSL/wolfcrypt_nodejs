@@ -23,6 +23,8 @@ const tests = require( './tests' );
 (async function() {
   for ( const key of Object.keys( tests ) )
   {
+    console.log("Running test: ", key)
     await tests[key]()
+    console.log("")
   }
 })()

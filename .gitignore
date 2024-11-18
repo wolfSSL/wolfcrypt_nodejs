@@ -1,3 +1,12 @@
 node_modules/*
 build/*
 package-lock.json
+
+# Ignore directories
+**/.vs
+**/bin
+**/obj
+**/node_modules
+
+# Ignore files
+*.bak

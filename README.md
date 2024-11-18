@@ -1,5 +1,13 @@
 # wolfCrypt Node.JS support
 
+## Requirements
+
+[Node.js](https://nodejs.org/en/download/package-manager)
+
+
+[npx](https://docs.npmjs.com/cli/v8/commands/npx)
+
+
 ## Description
 
 This Node.js module exposes various wolfCrypt native C functions to Node.js using the Napi library. It makes wolfCrypt functions for ECC, EVP, HMAC, PBKDF2, PKCS7, RSA and SHA available within Nodejs and also provides interface classes that streamline a lot of the tedious actions required when using these functions.
@@ -215,6 +223,311 @@ And import it using the folder name
 ```
 const { wolfcrypt, WolfSSLEncryptionStream } = require( 'wolfcrypt_nodejs' )
 ...
+```
+
+## Visual Studio
+
+Use the local [./lib/user_settings.h](./lib/user_settings.h); Copy it to your `<WOLFSSL_ROOT>/IDE/Win` directory (or wherever your wolfssl binaries will be).
+See the `wolfssl-VS2022.vcxproj` Project File in the root of your wolfSSL source.
+
+The [setup_env.ps1](./setup_env.ps1) or [setup_env.bat](./setup_env.bat) script can be used to setup the NodeJS/NPM environment.
+
+## wolfSSL Source Code
+
+The Windows Visual Studio environment assumes that wolfSSL source code repository is available. If not:
+
+From DOS:
+
+```dos
+cd C:\workspace
+
+:: Fetch this repo from your fork:
+git clone https://github.com/%USERNAME%/wolfcrypt_nodejs.git
+
+:: Fetch wolfssl from your fork:
+git clone https://github.com/%USERNAME%/wolfssl.git "wolfssl-%USERNAME%"
+
+cd "wolfssl-%USERNAME%"
+git remote add upstream https://github.com/wolfSSL/wolfssl.git
+```
+
+From Powershell:
+
+``` Powershell
+cd C:\workspace
+$USERNAME = $env:USERNAME
+
+# Fetch this repo from your fork:
+git clone https://github.com/$USERNAME/wolfcrypt_nodejs.git
+
+# Fetch wolfssl from your fork:
+git clone "https://github.com/$USERNAME/wolfssl.git" "wolfssl-$USERNAME"
+
+cd "wolfssl-$USERNAME"
+git remote add upstream https://github.com/wolfSSL/wolfssl.git
+```
+
+Script preference will be given first for the directory name `wolfssl-<username>`, then `wolfssl`
+
+### Environment Variable Settings
+
+For the `binding.gyp`:
+
+* `WOLFSSL_LIB_PATH` location of the wolfSSL compiled lib file, default: `C:/workspace/wolfssl/DLL Release/x64`
+* `WOLFSSL_INCLUDE_PATH` location of wolfssl include directory, default: `C:/workspace/wolfssl`
+* `WOLFSSL_USER_SETTINGS_PATH` location of wolfssl `user_settings.h` default: `C:/workspace/wolfssl/IDE/WIN`
+
+Important: Ensure the same `user_settings.h` used to compile wolfSSL is referenced from this NodeJS module!
+
+DOS
+
+```dos
+set WOLFSSL_LIB_PATH=C:/workspace/wolfssl-%USERNAME%/DLL Release/x64
+set WOLFSSL_INCLUDE_PATH=C:/workspace/wolfssl-%USERNAME%
+set WOLFSSL_USER_SETTINGS_PATH=C:/workspace/wolfssl-%USERNAME%/IDE/WIN
+
+set PATH=%PATH%;%WOLFSSL_LIB_PATH%
+```
+
+PowerShell
+
+```ps
+$env:WOLFSSL_LIB_PATH = "C:/workspace/wolfssl-$env:USERNAME/DLL Release/x64"
+$env:WOLFSSL_INCLUDE_PATH = "C:/workspace/wolfssl-$env:USERNAME"
+$env:WOLFSSL_USER_SETTINGS_PATH = "C:/workspace/wolfssl-$env:USERNAME/IDE/WIN"
+
+$env:PATH += ";$env:WOLFSSL_LIB_PATH"
+```
+
+## Visual Studio 2022
+
+See:
+
+* [Tutorial: Node.js for Beginners](https://learn.microsoft.com/en-us/visualstudio/javascript/tutorial-nodejs?view=vs-2022)
+* [Tutorial: Create a Node.js and Express app in Visual Studio](https://learn.microsoft.com/en-us/visualstudio/javascript/tutorial-nodejs?view=vs-2022)
+
+```powershell
+winget install Schniz.fnm
+```
+
+Ensure the architecture compiled in Visual Studio matches that in `node`: see `node -p "process.arch"`
+
+```powershell
+fnm env --use-on-cd | Out-String | Invoke-Expression
+fnm use --install-if-missing 20
+node -v # should print `v20.18.0`
+npx -v # should print `10.8.2`
+
+# Launch VS2022 from the same shell:
+& "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe"
+```
+
+Use the [IDE/WIN10/user_settings.h](https://github.com/wolfSSL/wolfssl/blob/master/IDE/WIN10/user_settings.h) file and
+ensure these items are defined:
+
+```c
+/* npm */
+#define NPM_WOLFCRYPT
+#ifdef NPM_WOLFCRYPT
+    #undef  HAVE_PKCS7
+    #define HAVE_PKCS7
+    #define HAVE_AES_KEYWRAP
+    #define WOLFSSL_AES_DIRECT
+    #define HAVE_X963_KDF
+    #define WOLFSSL_SHA224
+    #define WOLFSSL_KEY_GEN
+    #define HAVE_ECC
+    #define ECC_MAX_BITS 521
+    #define WC_ECC256
+    #define WC_ECC384
+    #define WC_ECC521
+    #define HAVE_ECC_ENCRYPT
+    #define WOLFSSL_UINT128_T_DEFINED
+    /* #define WC_RNG_SEED_CB */
+#endif
+```
+
+There's also a reference file included in the [./lib](./lib) directory [here](./lib/user_settings.h).
+
+See [wolfssl PR #8090](https://github.com/wolfSSL/wolfssl/pull/8090) that adds Visual Studio 2022 project files.
+
+Build wolfssl using Visual Studio and see the resulting files as noted in output:
+
+```
+1>   Creating library C:\workspace\wolfssl-gojimmypi-win\DLL Release\x64\wolfssl-VS2022.lib and object C:\workspace\wolfssl-gojimmypi-win\DLL Release\x64\wolfssl-VS2022.exp
+1>Generating code
+1>0 of 3869 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+1>  0 functions were new in current compilation
+1>  0 functions had inline decision re-evaluated but remain unchanged
+1>Finished generating code
+1>wolfssl-VS2022.vcxproj -> C:\workspace\wolfssl-gojimmypi-win\DLL Release\x64\wolfssl-VS2022.dll
+========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
+========== Build completed at 3:32 PM and took 12.825 seconds ==========
+```
+
+In the above case, using the [root level project `wolfssl-VS2022.vcxproj`](https://github.com/wolfSSL/wolfssl/blob/master/wolfssl-VS2022.vcxproj),
+select "DLL Release" build option; upon building the output binaries files should be found in
+`C:\workspace\wolfssl-%USERNAME%\DLL Release\x64\wolfssl-VS2022.lib`.
+
+It is best to convert the Windows `\` to `/`.
+
+If instead conpiled with the `wolfcrypt/test` app, the lib file will be in:
+
+`C:/workspace/wolfssl-%USERNAME%/wolfcrypt/test/DLL Release/x64/wolfssl-VS2022.lib`
+
+if this ` error C2065: 'TI': undeclared identifier` is encountered, ensure the `user_settings.h` mentioned above is used,
+in particular the `#define WOLFSSL_UINT128_T_DEFINED`.
+
+```
+  nothing.vcxproj -> C:\workspace\wolfcrypt_nodejs-gojimmypi\build\Release\\nothing.lib
+  main.cpp
+C:\workspace\wolfssl-gojimmypi-win\wolfssl\wolfcrypt\sp_int.h(257,44): error C2146: syntax error: missing ';' before identifier '__attribute__' [C:\workspace\wolfcrypt_
+nodejs-gojimmypi\build\wolfcrypt.vcxproj]
+  (compiling source file '../addon/wolfcrypt/main.cpp')
+
+C:\workspace\wolfssl-gojimmypi-win\wolfssl\wolfcrypt\sp_int.h(257,65): error C2065: 'TI': undeclared identifier [C:\workspace\wolfcrypt_nodejs-gojimmypi\build\wolfcrypt
+.vcxproj]
+  (compiling source file '../addon/wolfcrypt/main.cpp')
+```
+
+
+If this error is observed (missing `wolfssl/options.h`), see [wolfSSL install](https://github.com/wolfSSL/wolfssl/blob/master/INSTALL).
+Determine if the `WOLFSSL_USER_SETTINGS` preprocessor directive has been defined.
+
+```text
+gyp info spawn args ]
+
+  nothing.c
+  win_delay_load_hook.cc
+  nothing.vcxproj -> C:\workspace\wolfcrypt_nodejs-gojimmypi\build\Release\\nothing.lib
+  main.cpp
+C:\workspace\wolfcrypt_nodejs-gojimmypi\addon\wolfcrypt\h\evp.h(25,10): error C1083: Cannot open include file: 'wolfssl/options.h': No such file or directory [C
+:\workspace\wolfcrypt_nodejs-gojimmypi\build\wolfcrypt.vcxproj]
+  (compiling source file '../addon/wolfcrypt/main.cpp')
+
+gyp ERR! build error
+gyp ERR! stack Error: `C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe` failed with exit code: 1
+gyp
+```
+
+If this `Error: The specified module could not be found.` is observed:
+
+```text
+C:\workspace\wolfcrypt_nodejs-gojimmypi>npm run test
+
+> wolfcrypt@1.0.3 test
+> node test.js
+
+node:internal/modules/cjs/loader:1586
+  return process.dlopen(module, path.toNamespacedPath(filename));
+                 ^
+
+Error: The specified module could not be found.
+\\?\C:\workspace\wolfcrypt_nodejs-gojimmypi\build\Release\wolfcrypt.node
+    at Module._extensions..node (node:internal/modules/cjs/loader:1586:18)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at require (node:internal/modules/helpers:179:18)
+    at Object.<anonymous> (C:\workspace\wolfcrypt_nodejs-gojimmypi\interfaces\ecc.js:21:19)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12) {
+  code: 'ERR_DLOPEN_FAILED'
+}
+
+Node.js v20.18.0
+```
+
+Ensure the DLL can be found, either copied locally or in the DOS path:
+
+```dos
+:: set your location of the wolfSSL root directory:
+set WOLFSSL_ROOT=C:\workspace\wolfssl-%USERNAME%
+
+:: if using the DLL Release from an example, such as the wolfcrypt test:
+set PATH=%PATH%;%WOLFSSL_ROOT%\wolfcrypt\test\DLL Release\x64\
+
+:: otherwise set to root-level project; Be sure DLL Release was successfuly built and the file exists:
+set PATH=%PATH%;%WOLFSSL_ROOT%\DLL Release\x64\
+```
+
+Or when using PowerShell:
+
+```ps
+# set WOLFSSL_ROOT to c:\workspace\wolfssl-[your login name]
+
+$env:WOLFSSL_ROOT = "C:\workspace\wolfssl-$env:USERNAME"
+$env:PATH += ";$env:WOLFSSL_ROOT\DLL Release\x64"
+
+# Check the current path
+$env:PATH -split ";"
+```
+
+When encountering `cannot open input file... wolfssl[-VS2022].lib` like this:
+
+```
+LINK : fatal error LNK1181: cannot open input file 'C:\workspace\wolfssl\DLL Released\wolfssl-VS2022.lib' [C:\workspace\wolfcrypt_nodejs\build\wolfcrypt.vcxproj]
+```
+
+Ensure the `DLL Release` build was selected and that the `[wolfssl root]\DLL Release\x64\wolfssl-VS2022.lib` file exists; build with the wolfSSL project and confirm build was successful:
+
+```
+1>Finished generating code
+1>wolfssl-VS2022.vcxproj -> C:\workspace\wolfssl\DLL Release\x64\wolfssl-VS2022.dll
+========== Rebuild All: 1 succeeded, 0 failed, 0 skipped ==========
+========== Rebuild completed at 6:08 PM and took 17.377 seconds ==========
+```
+
+For the error: `LINK : fatal error LNK1181: cannot open input file '<your path>\DLL Release\x64\wolfssl.lib' ` like this:
+
+```
+  win_delay_load_hook.cc
+LINK : fatal error LNK1181: cannot open input file 'C:\workspace\wolfssl-gojimmypi\DLL Release\x64\wolfssl.lib' [C:\workspace\wolfcrypt_nodejs-gojimmypi\build\wolfcrypt.vcxproj]
+gyp ERR! build error
+gyp ERR! stack Error: `C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe` failed with exit code: 1
+gyp ERR! stack     at ChildProcess.onExit (C:\workspace\wolfcrypt_nodejs-gojimmypi\node_modules\node-gyp\lib\build.js:203:23)
+gyp ERR! stack     at ChildProcess.emit (node:events:519:28)
+gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:294:12)
+```
+
+Ensure wolfSSL has been build with the `DLL Release` build option and that the files exist in `<your path>\DLL Release\x64\`.
+
+
+Also ensure the `binding.gyp` file uses _forward slashes_, (or double backslashes). Not just a single backslash.
+
+```
+            ['OS=="win"', {
+                "libraries": [
+                    "C:/workspace/wolfssl-gojimmypi-win/DLL Release/x64/wolfssl-VS2022.lib",
+```
+
+### wolfSSL Configuration Notes
+
+Note that the `options.h` definition should match those from the compiled lib file that used the respective
+Windows [user_settings.h](https://github.com/gojimmypi/wolfssl/blob/master/IDE/WIN10/user_settings.h).
+
+
+Clean build:
+
+```powershell
+npm run clean
+node-gyp clean
+node-gyp rebuild
+```
+
+See the `my_test.ps1` script that also includes:
+
+```
+npm i
+npm run test
+```
+
+Run it like this:
+
+```
+powershell -ExecutionPolicy Bypass -File .\my_test.ps1
 ```
 
 ## Tests Output
